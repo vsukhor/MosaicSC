@@ -1,0 +1,2 @@
+workingDir_in: /Users/vs/Mitofraps/MosaicSC/runs/1/ 
+workingDir_out: /Users/vs/Mitofraps/MosaicSC/runs/1/ 
