@@ -3,9 +3,6 @@
     Functionality is similar to the accompanying jupyter notebook.
 """
 
-import sys
-import os.path
-
 from common import import_log_files, plot_timedata
 
 
