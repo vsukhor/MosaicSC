@@ -68,11 +68,11 @@ template <typename BC>
 void SC<BC>::
 write( std::ofstream& ofs ) const
 {
-    ofs.write(reinterpret_cast<const char*>(&ind), sizeof(szt));
+    ofs.write(reinterpret_cast<const char*>(&ind), sizeof(ind));
                                                         
     for (const auto& o : c) {
         const szt s {o.size()};
-        ofs.write(reinterpret_cast<const char*>(&s), sizeof(szt));
+        ofs.write(reinterpret_cast<const char*>(&s), sizeof(s));
         for (const auto oo : o)
             oo->write(ofs);
     }

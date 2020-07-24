@@ -312,14 +312,14 @@ write( const bool startnew,
         ofs.write(reinterpret_cast<const char*>(&L[0]), sizeof(szt));
         ofs.write(reinterpret_cast<const char*>(&L[1]), sizeof(szt));
     }
-    ofs.write(reinterpret_cast<const char*>(&itt), sizeof(szt));
+    ofs.write(reinterpret_cast<const char*>(&itt), sizeof(itt));
     szt s {host->scs.size()};
-    ofs.write(reinterpret_cast<const char*>(&s), sizeof(szt));
-    for (szt q=0; q<host->scs.size(); q++)
-        host->scs[q].write(ofs);
+    ofs.write(reinterpret_cast<const char*>(&s), sizeof(s));
+    for (const auto& o : host->scs)
+        o.write(ofs);
 
     szt nst2save {last ? 0 : szt(host->it/sps.savefreq)};
-    ofs.write(reinterpret_cast<const char*>(&nst2save), sizeof(szt));
+    ofs.write(reinterpret_cast<const char*>(&nst2save), sizeof(nst2save));
 
     return 0;
 }
