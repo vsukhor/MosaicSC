@@ -288,9 +288,9 @@ output( const bool startnew, const szt itt,
     logline(*msgr.so, itt, i1, j1, i2, j2, t1old, d1old, t2old, d2old, t1new, d1new, t2new, d2new, e1old, e2old, e1new, e2new, dE);
     logline(*msgr.sl, itt, i1, j1, i2, j2, t1old, d1old, t2old, d2old, t1new, d1new, t2new, d2new, e1old, e2old, e1new, e2new, dE);
     if (host->it % sps.savefreq == 0) {
-        write(startnew, 0, host->it);
-//        write_lattice(startnew, 0, it);
-        write_lattice(1, 1, host->it);
+        write(startnew, false, host->it);
+//        write_lattice(startnew, false, it);
+        write_lattice(true, true, host->it);
     }
     mtx.unlock();
 }
