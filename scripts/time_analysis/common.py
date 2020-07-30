@@ -10,16 +10,16 @@ def import_log_files(path, runs):
     pat = str(runs[0]) + ' : ' + str(runs[1])
 
     fn = lambda k: path + 'log_' + str(k) + '.txt'
+    append_static_recs = lambda rs: [Records.runs_read_in.append(r) for r in rs.runs]
 
     cf, r = _read_log(fn(runs[0]))
     recs = [r]
-    Records.runs_read_in.append(r.runs)
+    append_static_recs(r)
     for i in range(runs[0]+1, runs[1]+1):
         c, r = _read_log(fn(i))
         if c == cf:
             recs.append(r)
-            for r in r.runs:
-                Records.runs_read_in.append(r)
+            append_static_recs(r)
         else:
             print(f'Runs within run0={runs[0]} and run1={runs[1]} do use different configurations at {i}')
             sys.exit([-1])
@@ -95,7 +95,7 @@ def fit_exp(gd, data_x, data_y, p0=None):
 def plot_timedata(name, data_x, data_y, pars=None, fit=None,
                   figsize=None, colors=None, n=1, labels=None):
 
-    """ Plot data 'data_y' and eventually 'fit', both  specified at 'data_x'.
+    """ Plot data 'data_y' and eventually 'fit', both specified at 'data_x'.
     """
 
     import matplotlib.pyplot as plt
