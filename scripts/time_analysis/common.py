@@ -5,6 +5,7 @@
 # ======================================================================================================================
 def import_log_files(path, runs):
 
+    import sys
     from records import Records
 
     pat = str(runs[0]) + ' : ' + str(runs[1])
@@ -21,8 +22,8 @@ def import_log_files(path, runs):
             recs.append(r)
             append_static_recs(r)
         else:
-            print(f'Runs within run0={runs[0]} and run1={runs[1]} do use different configurations at {i}')
-            sys.exit([-1])
+            print(f'Error: Runs between {runs[0]} and {runs[1]} do use differing configurations at run {i}. \nExiting!')
+            sys.exit(-1)
     ravg = Records.average(recs)
 
     return ravg, pat
