@@ -49,8 +49,4 @@ if __name__ == '__main__':
     # Plot time evolution of the interparticle connectivity:
     ravg.plot_connectivity(pat)
 
-#    summary_fname = path + 'log_summary_' + '.txt'
-#    if os.path.isfile(summary_fname):
-#        pfr_old = Summary.from_file(summary_fname)
-
 
