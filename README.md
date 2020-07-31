@@ -1,6 +1,6 @@
 #  MosaicSC 
 
-### A stochastic simulation of molecular aggregates using Potts model
+### Simulation of space-embedded molecular aggregates using Potts model
 
 #### Introduction
  
