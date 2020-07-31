@@ -15,11 +15,11 @@ It is recommended that the work is done using Python virtual environment:
 
 Then, the script can be launched the ordinary way:
 
-`(venv) $ python read_log.py`  
+`(venv) $ python ./time_analysis/read_log.py`  
 
 To install and use the notebook:
  
 `(venv) $ pip install jupyter`  
-`(venv) $ jupyter notebook read_log.ipynb` 
+`(venv) $ jupyter notebook ./time_analysis/read_log.ipynb` 
 
 The scripts were tested with Python 3.7 and jupyter-notebook v. 6.0.3. 
