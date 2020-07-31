@@ -52,7 +52,7 @@ def _read_log(fname):
         skip_lines(4, f)
         while True:
             r = Records.read(f)
-            if r[0] == '\n': break
+            if r == '' or r[0] == '\n': break
             rs.add(r)
 
     print(f'read in: {len(rs.inds)} records')
