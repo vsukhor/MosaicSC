@@ -39,7 +39,7 @@ The first argument is the path to the configuration file.
 
 ### Analyzing the results
 
-The simulation saves snapshots of the Potts lattice, list of the SCs present and generates a detailde log file reporting evolution of the key metrics.  
+The simulation saves snapshots of the Potts lattice, list of the SCs present and generates a detailed log file reporting evolution of the key metrics parameters.  
 [scripts/time_analysis/](scripts/time_analysis/) directory contains Python 3 code for basic visualization and analysis of the logged data.
 The scripts can be used independently of the main C++ code,  provided the output files are available (see the [instructions](scripts/README.md) inside). 
 
