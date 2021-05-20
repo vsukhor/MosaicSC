@@ -1,6 +1,6 @@
 Parameters:  
-workingDir_in: ./examples/example1/ 
-workingDir_out: ./examples/example1/ 
+workingDir_in: ../examples/example1/ 
+workingDir_out: ../examples/example1/ 
 RUN_ini = 0 
 RUN_end = 1 
 nthreads = 1 
@@ -16,9 +16,9 @@ inum = 9
 rates_f []:   100.000000 0.000000 100.000000 0.000000 0.000000 0.000000 100.000000 0.000000 0.000000  
 syn = 1.000000 
 beta = 0 
-Run 1 started: Fri Jul 31 16:04:07 2020
+Run 1 started: Mon Aug 24 12:30:58 2020
  on MacBook-Pro.local 
-Reading from file ./examples/example1/seeds seed no: 1 
+Reading from file ../examples/example1/seeds seed no: 1 
 RUN = 1 
 SEED = 831237375 
 Lattice dimensions 5 230 
@@ -431,7 +431,7 @@ Lattice dimensions 5 230
  nSC 57 scMasM 1.666667e+00 1.754386e-01 1.754386e-01 2.631579e-01 1.052632e+00 scMasV 1.625730e+00 2.148355e-01 1.446600e-01 2.289935e-01 5.410892e-01 
  conCT 0.000000e+00 6.000000e-01 0.000000e+00 2.600000e-01 1.250000e-01  (1) 7.000000e-01 1.000000e+00 0.000000e+00 7.000000e-01  (2) 0.000000e+00 0.000000e+00  (3) 3.333333e-01 0.000000e+00 0.000000e+00 9.333333e-01 6.666667e-02 6.666667e-02 8.666667e-01 0.000000e+00 0.000000e+00 3.333333e-01  (4) 1.166667e-01 0.000000e+00 3.333334e-02 4.500000e-01 3.333334e-02 1.166667e-01 
 
-Run 1 finished: Fri Jul 31 16:04:07 2020
+Run 1 finished: Mon Aug 24 12:30:59 2020
 on MacBook-Pro.local 
-Wall time used; 0.603808 sec 
+Wall time used; 1.327546 sec 
 
