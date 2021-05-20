@@ -1,2 +1,5 @@
 .DS_Store
-./scripts/time_analysis/.ipynb_checkpoints
+.ipynb_checkpoints
+__pycache__/
+venv*/
+.idea/
