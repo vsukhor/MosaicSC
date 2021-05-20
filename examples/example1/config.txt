@@ -1,7 +1,7 @@
 RUN_ini                     = 0
 RUN_end                     = 1
 
-nthreads                    = 1
+nthreads                    = 2
 resume                      = 0
 Niter                       = 100000
 logfreq (iter)              = 1000
