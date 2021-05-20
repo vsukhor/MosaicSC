@@ -93,7 +93,7 @@ print_lattice( const szt i1,
             if ((i == i1 && j == j1) ||
                 (i == i2 && j == j2))
                 cl = ANSI_BG_MAGENTA; //ANSI_BOLD_ON;
-            std::cout  << cl << tp[i][j] << "  "; 
+            std::cout  << cl << tp[i][j] << "  ";
         }
         std::cout << ANSI_RESET << std::endl;
     }
@@ -158,7 +158,7 @@ print_gE_color( const szt i1,
             if ((i == i1 && j == j1) ||
                 (i == i2 && j == j2))
                 cl = ANSI_FG_MAGENTA;//ANSI_BOLD_ON;
-            std::cout << cl << gE[i][j] << " "; 
+            std::cout << cl << gE[i][j] << " ";
         }
         std::cout << ANSI_FG_WHITE << std::endl;
     }
@@ -174,7 +174,7 @@ print_gE_bw( const szt ,//i1,
 {
     for (szt i=0; i<L[0]; i++) {
         for (szt j=0; j<L[1]; j++)
-            std::cout << gE[i][j] << " "; 
+            std::cout << gE[i][j] << " ";
         std::cout << std::endl;
     }
     std::cout << std::endl;
@@ -207,7 +207,7 @@ print_mskSC(const szt x0,
                 C<3>::node_is_occupied(i, j, tp, di, L) ||
                 C<4>::node_is_occupied(i, j, tp, di, L) )
                 cl = ANSI_INVERSE_ON;
-            std::cout << cl << mskSC[i][j] << s; 
+            std::cout << cl << mskSC[i][j] << s;
         }
         std::cout << ANSI_RESET << std::endl;
     }
@@ -226,14 +226,14 @@ logline( std::ostream& ofs, const szt itt,
          const real e1new, const real e2new, const real dE ) const noexcept
 {
     ofs << itt << " : "
-        << "runname " << runname 
-        << " L " << L[0] << " " << L[1] 
+        << "runname " << runname
+        << " L " << L[0] << " " << L[1]
         << " (" << t1old << ", " << d1old << ") at " << i1 << " " << j1
         << " and (" << t2old << ", " << d2old << ") at " << i2 << " " << j2
         << " to ("   << t1new << ", " << d1new
         << ") and (" << t2new << ", " << d2new << ")" << std::endl;
-    ofs << " eOld: " << e1old << " " << e2old 
-        << " eNew: " << e1new << " " << e2new 
+    ofs << " eOld: " << e1old << " " << e2old
+        << " eNew: " << e1new << " " << e2new
         << " dE " << dE;
     ofs << " cE "; for (const auto o : cE) ofs << o << " ";
     ofs << "Etot " << avg(cE) << std::endl;
@@ -252,7 +252,7 @@ logline( std::ostream& ofs, const szt itt,
     for (const auto& o : host->conCT)
         ofs << o << " ";
     for (szt k=1; k<BaseC::NT; k++) {
-        ofs << " (" + STR(k) + ") "; 
+        ofs << " (" + STR(k) + ") ";
         for (const auto o : host->conNbT[k])
             ofs << o << " ";
     }
@@ -288,9 +288,9 @@ output( const bool startnew, const szt itt,
     logline(*msgr.so, itt, i1, j1, i2, j2, t1old, d1old, t2old, d2old, t1new, d1new, t2new, d2new, e1old, e2old, e1new, e2new, dE);
     logline(*msgr.sl, itt, i1, j1, i2, j2, t1old, d1old, t2old, d2old, t1new, d1new, t2new, d2new, e1old, e2old, e1new, e2new, dE);
     if (host->it % sps.savefreq == 0) {
-        write(startnew, false, host->it);
-//        write_lattice(startnew, false, it);
-        write_lattice(true, true, host->it);
+        write(startnew, 0, host->it);
+//        write_lattice(startnew, 0, it);
+        write_lattice(1, 1, host->it);
     }
     mtx.unlock();
 }
@@ -312,14 +312,14 @@ write( const bool startnew,
         ofs.write(reinterpret_cast<const char*>(&L[0]), sizeof(szt));
         ofs.write(reinterpret_cast<const char*>(&L[1]), sizeof(szt));
     }
-    ofs.write(reinterpret_cast<const char*>(&itt), sizeof(itt));
+    ofs.write(reinterpret_cast<const char*>(&itt), sizeof(szt));
     szt s {host->scs.size()};
-    ofs.write(reinterpret_cast<const char*>(&s), sizeof(s));
-    for (const auto& o : host->scs)
-        o.write(ofs);
+    ofs.write(reinterpret_cast<const char*>(&s), sizeof(szt));
+    for (szt q=0; q<host->scs.size(); q++)
+        host->scs[q].write(ofs);
 
     szt nst2save {last ? 0 : szt(host->it/sps.savefreq)};
-    ofs.write(reinterpret_cast<const char*>(&nst2save), sizeof(nst2save));
+    ofs.write(reinterpret_cast<const char*>(&nst2save), sizeof(szt));
 
     return 0;
 }
