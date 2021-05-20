@@ -35,6 +35,7 @@
 #include "definitions.h"
 #include "parameters.h"
 #include "base_component.h"
+//#include "c0.h"
 #include "c1.h"
 #include "c2.h"
 #include "c3.h"
@@ -52,7 +53,7 @@ class IO {
     friend class Potts;
 
     IO(Potts* host) noexcept;        // The only constructor
-          
+
     static constexpr szt screenWidth {70};
     const Parameters&    sps;
     const std::string&   runname;
@@ -87,13 +88,13 @@ class IO {
                  const szt, const szt, const szt, const szt, const szt, const Ornt::T,
                  const szt, const Ornt::T, const szt, const Ornt::T, const szt, const Ornt::T,
                  const real, const real, const real, const real, const real) const noexcept;
-                 
+
     int write(         const bool, const bool, const szt ) const;
     int write_lattice( const bool, const bool, const szt ) const;
 
     szt readin_lattice();
 
-}; 
+};
 
 }   // namespace MosaicSC
 
