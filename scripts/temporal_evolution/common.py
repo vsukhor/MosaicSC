@@ -1,17 +1,24 @@
-""" General purpose functions used in the analysis of simulation log files.
+"""
+General purpose functions used in the analysis of simulation log files.
 """
 
+import sys
 
-# ======================================================================================================================
+from config import Config
+from misc import skip_lines
+from records import Records
+
+
 def import_log_files(path, runs):
 
-    import sys
-    from records import Records
+    pat = f'{runs[0]} : {runs[1]}'
 
-    pat = str(runs[0]) + ' : ' + str(runs[1])
+    def fn(k):
+        return path / f'log_{k}.txt'
 
-    fn = lambda k: path + 'log_' + str(k) + '.txt'
-    append_static_recs = lambda rs: [Records.runs_read_in.append(r) for r in rs.runs]
+    def append_static_recs(rs):
+        for v in rs.runs:
+            Records.runs_read_in.append(v)
 
     cf, r = _read_log(fn(runs[0]))
     recs = [r]
@@ -22,23 +29,20 @@ def import_log_files(path, runs):
             recs.append(r)
             append_static_recs(r)
         else:
-            print(f'Error: Runs between {runs[0]} and {runs[1]} do use differing configurations at run {i}. \nExiting!')
+            print(f'Error: Runs between {runs[0]} and {runs[1]} do use '
+                  f'differing configurations at run {i}. \nExiting!')
             sys.exit(-1)
     ravg = Records.average(recs)
 
     return ravg, pat
 
 
-# ======================================================================================================================
 def _read_log(fname):
-
-    """ Read a log file 'fname' to produce instance of Config and Records.
+    """
+    Read a log file 'fname' to produce instance of Config and Records.
     """
 
-    from config import Config
-    from records import Records
-
-    print('Reading data from: ' + fname)
+    print(f'Reading data from: {fname}')
 
     cf = Config()
     rs = Records()
@@ -52,80 +56,10 @@ def _read_log(fname):
         skip_lines(4, f)
         while True:
             r = Records.read(f)
-            if r == '' or r[0] == '\n': break
+            if r == '' or r[0] == '\n':
+                break
             rs.add(r)
 
     print(f'read in: {len(rs.inds)} records')
 
     return cf, rs
-
-
-# ======================================================================================================================
-def skip_lines(n, f):
-    """ Skip 'n' lines while reading from text file 'f'.
-    """
-
-    for _ in range(n): f.readline()
-
-
-# ======================================================================================================================
-def fit_exp(gd, data_x, data_y, p0=None):
-
-    """ Fit an exponent (growing if gd=='grw' or decaying otherwise)
-        to 'data_y' at 'data_x'using 'p0' as initial guess.
-    """
-
-    import numpy as np
-    from scipy.optimize import curve_fit
-
-    if gd == 'grw':
-        def func(x, a, b, c):
-            return a * (1. - np.exp(-x / b)) + c
-        eq = '$y(x) = a e^{-x/b} + c$'
-    else:
-        def func(x, a, b, c):
-            return a * np.exp(-x / b) + c
-        eq = '$y(x) = a(1 - e^{-x/b}) + c$'
-
-    p, cov = curve_fit(f=func, xdata=data_x, ydata=data_y, p0=p0)
-
-    return func(np.array(data_x), *p), p, eq
-
-
-# ======================================================================================================================
-def plot_timedata(name, data_x, data_y, pars=None, fit=None,
-                  figsize=None, colors=None, n=1, labels=None):
-
-    """ Plot data 'data_y' and eventually 'fit', both specified at 'data_x'.
-    """
-
-    import matplotlib.pyplot as plt
-    from records import Records
-
-    if colors is None:
-        colors = ['b.']
-
-    fig = plt.figure(figsize=figsize)
-    ax = fig.add_subplot(111)
-
-    x = [int(i/1000) for i in data_x]
-    if n == 1:
-        ax.plot(x, data_y, colors[0], lw=0.5)
-        if fit is not None:
-            ax.plot(x, fit, colors[1], lw=1.)
-            parstr = f'a = {pars[0]:.2f}\nb = {pars[1]:.2f}\nc = {pars[2]:.2f}'
-            ax.text(0.8*ax.get_xlim()[1],
-                    ax.get_ylim()[0] + 0.8*(ax.get_ylim()[1] - ax.get_ylim()[0]),
-            parstr, fontsize=10)
-    else:
-        for j in range(n):
-            ax.plot(x, [k[j] for k in data_y], colors[j], label=labels[j])
-        ax.legend()
-        ax.set_xlim([0., x[-1]*1.2])    # to accommodate the legend
-
-    ax.set_xlabel(Records.time_label+ 'x1000')
-    plt.grid(True)
-    plt.title(name)
-    plt.show()
-
-
