@@ -31,8 +31,8 @@
 #include "utils/common/exceptions.h"
 
 #define _DEBUG
-#define FP32            // comment this out to switch to double precision
-#define CUDA 0          // define CUDA > 0 to switch the GPU use off
+#define FP32      // comment this out to switch to double precision
+#define CUDA 0    // define CUDA > 0 to switch the GPU use off
 
 #if CUDA>0
     #include "utils/random/with_cuda.h"
@@ -63,7 +63,7 @@ using namespace Utils::Common;
 template<uint> class C {};
 
     struct Ornt {
-        using T = int;        // data type used by the class
+        using T = int;     // data type used by the class
         static constexpr T up {1};
         static constexpr T no {0};
         static constexpr T dw {-1};
@@ -77,7 +77,6 @@ template<uint> class C {};
                          ? up : from;
         }
     };
-}
-   // namespace MosaicSC
+} // namespace MosaicSC
 
 #endif // MOSAICSC_DEFINITIONS_H

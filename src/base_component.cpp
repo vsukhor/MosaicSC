@@ -85,7 +85,8 @@ position( const szt i,
           const szt L[2] ) noexcept
 {
     auto asError = [&](const long shi, const long shj) {
-        const auto msg = "Error: in position(): shift not found for shi " + STR(shi) + ", shj " + STR(shj);
+        const auto msg = "Error: in position(): shift not found for shi " +
+                          STR(shi) + ", shj " + STR(shj);
         XASSERT(false, msg);
         return A2<szt> {};    // pro forma
     };

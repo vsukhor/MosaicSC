@@ -78,7 +78,8 @@ int main( int argc, const char* argv[] )
     const auto ntasks = sps.RUN_end - (sps.RUN_ini - 1);
 
     if ((CUDA && ntasks > 1))
-        return Exceptions::simple("Using CUDA is only compatible with single-threaded execution.\n Please set nthreads = 1");
+        return Exceptions::simple(
+            "Using CUDA is only compatible with single-threaded execution.\n Please set nthreads = 1");
 
     Threads th {sps.RUN_ini,
                 ntasks,
@@ -131,7 +132,9 @@ void runThread( const szt ii1,
 
             char hostname[1024];
             gethostname(hostname, 1024);
-            msgr.print("Run " + runname + " started: " + stopwatch.start.str + " on " + std::string(hostname));
+            msgr.print("Run " + runname +
+                       " started: " + stopwatch.start.str +
+                       " on " + std::string(hostname));
 
             auto R = std::make_unique<RandFactory>(seedfilename, ii, msgr);
 
@@ -145,7 +148,9 @@ void runThread( const szt ii1,
             logfile << std::endl;
             std::cout << std::endl;
             stopwatch.stop();
-            const std::string message {"Run " + runname + " finished: " + stopwatch.stop.str  + "on " + std::string(hostname)};
+            const std::string message {"Run " + runname +
+                                       " finished: " + stopwatch.stop.str  +
+                                       "on " + std::string(hostname)};
             msgr.print(message);
             msgr.print("Wall time used; " + stopwatch.duration() + " sec");
             logfile << std::endl;
@@ -154,4 +159,3 @@ void runThread( const szt ii1,
         mtx.unlock();
     }
 }
-

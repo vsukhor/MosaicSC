@@ -159,7 +159,8 @@ run() noexcept
                 e2new < INF<real>) {
                 // Metropolis condition on energy difference:
                 if (const auto dE = e1new + e2new - e1old - e2old;
-                    dE < zero<real> || rf->r01u() < std::exp(-sps.beta * dE)) {        // the move is accepted: increment
+                    dE < zero<real> || rf->r01u() < std::exp(-sps.beta * dE)) {
+                    // the move is accepted: increment
                     if (it % sps.logfreq == 0)
                         io.output(0, it, i1, j1, i2, j2,
                                   t1old, d1old, t2old, d2old,
@@ -196,12 +197,14 @@ choose_node_pair( uint& i1, uint& i2,
 
     // the 2nd node is of the type among nodes on type-specific rows:
     if (const auto t1 = tp[i1][j1];
-        t1 > 0) {                    // the 1st node is occupied -> the 2nd node should be empty
+        t1 > 0) {
+        // the 1st node is occupied -> the 2nd node should be empty
         const auto q2 = rf->uniform0(emPos[t1].size());
         i2 = emPos[t1][q2][0];
         j2 = emPos[t1][q2][1];
     }
-    else {                            // the 1st node is empty -> the 2nd node should be occupied
+    else {
+        // the 1st node is empty -> the 2nd node should be occupied
         const auto rt = rowTypes[i1];
         if (rt.size() == 1) {
             const auto q2 = rf->uniform0(ocPos[rt[0]].size());
@@ -252,8 +255,10 @@ massvarSC() noexcept
     }
     A2<real[BaseC::NT]> v;
     for (szt i=0; i<BaseC::NT; i++) {
-        v[0][i] = avg(s[i]);        // 0: mean of SC sizes; 1-4: mean of # of corresponding monomers per SC
-        v[1][i] = var(s[i]);        // var of the same
+        // 0: mean of SC sizes; 1-4: mean of # of corresponding monomers per SC
+        v[0][i] = avg(s[i]);
+        // var of the same
+        v[1][i] = var(s[i]);
     }
     return v;
 }
@@ -306,9 +311,9 @@ parce( const szt i,
        const szt j,
        SC<BaseC>& sc ) noexcept
 {
-    if (mskSC[i][j]) return;     // already parced here
+    if (mskSC[i][j]) return;    // already parced here
     const auto t = tp[i][j];
-    if (!t) return;                // site is empty
+    if (!t) return;             // site is empty
     mskSC[i][j] = sc.ind + 1;   // mark as parced
 
     auto ld = [&](const auto& itr) {

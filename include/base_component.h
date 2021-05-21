@@ -38,7 +38,7 @@ using namespace Utils::Common;
 
 struct Occupancy {
     const Ornt::T so;        // orientation of the 1st component
-    const long    sh[2];    // shift
+    const long    sh[2];     // shift
     const long    rv[2] {-sh[0], -sh[1]};
 
     constexpr auto
@@ -52,8 +52,8 @@ struct Interactor {
     const Ornt::T so;        // orientation of the 1st component
     const Ornt::T di;        // orientation of the 2nd component
     const szt      t;        // type of the 2nd component
-    const long    sh[2];    // shift
-    const real*      k;        // rate
+    const long    sh[2];     // shift
+    const real*      k;      // rate
     const char    name[8];
     const long    rv[2] {-sh[0], -sh[1]};
 

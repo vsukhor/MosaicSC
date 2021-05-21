@@ -66,8 +66,10 @@ hamming_dist( const szt i,
      const szt L[] ) noexcept
 {
     auto interacts = [&](auto& o) {
-        return ((ornt == o.so              && is_occupied(o.t, o.di,            i, j, o.sh, tp, di, L)) ||
-                (ornt == Ornt::usd(o.so) && is_occupied(o.t, Ornt::usd(o.di), i, j, o.rv, tp, di, L)));
+        return ((ornt == o.so            &&
+                 is_occupied(o.t, o.di,            i, j, o.sh, tp, di, L)) ||
+                (ornt == Ornt::usd(o.so) &&
+                 is_occupied(o.t, Ornt::usd(o.di), i, j, o.rv, tp, di, L)));
     };
 
     for (const auto& o : phb)

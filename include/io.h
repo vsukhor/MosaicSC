@@ -61,33 +61,41 @@ class IO {
     Potts*                     host;
     Msgr&                      msgr;
     std::mutex&                mtx;
-    const szt                 (&L)[2];            // grid dimensions: nrows, ncols
+    const szt                 (&L)[2];    // grid dimensions: nrows, ncols
     const std::vector<SC<BaseC>>& scs;
     const vec2<szt>&           mskSC;
-    vec2<szt>&                 tp;               // grid node complex types
-    vec2<Ornt::T>&             di;               // grid node orientations
-    const std::vector<real>&   cE;               // complex energy values
-    const vec2<real>&          gE;               // grid energy valuse
+    vec2<szt>&                 tp;        // grid node complex types
+    vec2<Ornt::T>&             di;        // grid node orientations
+    const std::vector<real>&   cE;        // complex energy values
+    const vec2<real>&          gE;        // grid energy valuse
 
-    void print_lattice(const szt, const szt, const szt, const szt) const noexcept;
-    void print_lattice(const szt, const szt, const szt, const szt, const szt, const szt) const noexcept;
+    void print_lattice(const szt, const szt,
+                       const szt, const szt) const noexcept;
+    void print_lattice(const szt, const szt, const szt,
+                       const szt, const szt, const szt) const noexcept;
     void print_orient() const noexcept;
-    void print_orient( const szt, const szt) const noexcept;
-    void print_gE_color(     const szt, const szt, const szt, const szt) const noexcept;
-    void print_gE_bw(        const szt, const szt, const szt, const szt) const noexcept;
+    void print_orient(const szt, const szt) const noexcept;
+    void print_gE_color(const szt, const szt, const szt,
+                        const szt) const noexcept;
+    void print_gE_bw(const szt, const szt, const szt,
+                     const szt) const noexcept;
     void print_mskSC() const noexcept;
-    void print_mskSC(  const szt, const szt) const noexcept;
+    void print_mskSC(const szt, const szt) const noexcept;
 
     void logline( std::ostream&, const szt,
                   const szt, const szt, const szt, const szt,
                   const szt, const Ornt::T, const szt, const Ornt::T,
                   const szt, const Ornt::T, const szt, const Ornt::T,
-                  const real, const real, const real, const real, const real ) const noexcept;
+                  const real, const real, const real,
+                  const real, const real ) const noexcept;
 
     void output( const bool, const szt,
-                 const szt, const szt, const szt, const szt, const szt, const Ornt::T,
-                 const szt, const Ornt::T, const szt, const Ornt::T, const szt, const Ornt::T,
-                 const real, const real, const real, const real, const real) const noexcept;
+                 const szt, const szt, const szt,
+                 const szt, const szt, const Ornt::T,
+                 const szt, const Ornt::T, const szt,
+                 const Ornt::T, const szt, const Ornt::T,
+                 const real, const real, const real,
+                 const real, const real) const noexcept;
 
     int write(         const bool, const bool, const szt ) const;
     int write_lattice( const bool, const bool, const szt ) const;

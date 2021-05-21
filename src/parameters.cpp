@@ -65,10 +65,12 @@ load_config( const std::string& fname )
         else if (parname == "detailedfreq")   std::stringstream(value) >> detailedfreq;
         else if (parname == "finaldetailed")  std::stringstream(value) >> finaldetailed;
         else if (parname == "savefreq")       std::stringstream(value) >> savefreq;
-        else if (parname == "Ntot")           initialize_arrayparam(numBasicTypes, value, "numBasicTypes", Ntot);
+        else if (parname == "Ntot")
+            initialize_arrayparam(numBasicTypes, value, "numBasicTypes", Ntot);
         else if (parname == "dilution")       std::stringstream(value) >> dilution;
         else if (parname == "inum")           std::stringstream(value) >> inum;
-        else if (parname == "rates_f")        initialize_arrayparam(inum, value, "inum", rates_f);
+        else if (parname == "rates_f")
+            initialize_arrayparam(inum, value, "inum", rates_f);
         else if (parname == "syn")            std::stringstream(value) >> syn;
         else if (parname == "beta")           std::stringstream(value) >> beta;
         else if (parname != "") {
@@ -109,7 +111,9 @@ initialize_arrayparam( const szt len,
                        std::vector<K>& par )
 {
     if (len < 1) {
-        std::cout << "Error in config file: " + parname + " should be initialized before" << std::endl;
+        std::cout << "Error in config file: " + parname
+                  << " should be initialized before"
+                  << std::endl;
         exit(0);
     }
     par.resize(len);
@@ -120,8 +124,9 @@ initialize_arrayparam( const szt len,
         if (e == std::string::npos) e = value.length();
         const std::string val {value.substr(0, e)};
         if (val.length() < 1) {
-            std::cout << "Error in config file: Number of elelments in " + parname + " is smaller than "
-                      << len << std::endl;
+            std::cout << "Error in config file: Number of elelments in " + parname
+                      << " is smaller than " << len
+                      << std::endl;
             exit(0);
         }
         std::stringstream(val) >> par[j];
@@ -132,7 +137,8 @@ initialize_arrayparam( const szt len,
     }
 }
 
-// if the line contains a valid parname-value combination, returns true and combination, otherwise retruns false
+// If the line contains a valid parname-value combination,
+// returns true and combination, otherwise retruns false.
 bool Parameters::
 preprocess_line( std::ifstream& config,
                  std::string& parname,
@@ -155,10 +161,16 @@ preprocess_line( std::ifstream& config,
         return false;
 
     int parnameend = -1;
-    if (     line.find_first_of(emp) == std::string::npos && line.find_first_of(tab) != std::string::npos) parnameend = (int)line.find_first_of(tab);
-    else if (line.find_first_of(emp) != std::string::npos && line.find_first_of(tab) == std::string::npos) parnameend = (int)line.find_first_of(emp);
-    else if (line.find_first_of(emp) != std::string::npos && line.find_first_of(tab) != std::string::npos) parnameend = std::min( (int)line.find_first_of(emp),
-                                                                                                                                  (int)line.find_first_of(tab) );
+    if (     line.find_first_of(emp) == std::string::npos &&
+             line.find_first_of(tab) != std::string::npos)
+        parnameend = (int)line.find_first_of(tab);
+    else if (line.find_first_of(emp) != std::string::npos &&
+             line.find_first_of(tab) == std::string::npos)
+        parnameend = (int)line.find_first_of(emp);
+    else if (line.find_first_of(emp) != std::string::npos &&
+             line.find_first_of(tab) != std::string::npos)
+        parnameend = std::min((int)line.find_first_of(emp),
+                              (int)line.find_first_of(tab));
     parname = line.substr(0, (size_t)parnameend);
 
     value = line.substr(line.find_last_of("=")+1);

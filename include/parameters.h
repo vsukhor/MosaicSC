@@ -73,7 +73,8 @@ private:
                                 const std::string&,
                                 std::vector<K>& );
 
-    // if the line contains a valid parname-value combination, returns true and combination, otherwise retruns false
+    // If the line contains a valid parname-value combination,
+    // returns true and combination, otherwise retruns false.
     bool preprocess_line( std::ifstream&,
                           std::string&,
                           std::string& );
