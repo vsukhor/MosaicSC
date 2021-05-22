@@ -170,5 +170,5 @@ $(ASMS_DIR)main.s : $(MOSAICSC_APP_DIR)main.cpp \
 .PHONY: clean
 
 clean:
-	rm -rf $(OBJS_DIR)*.o $(ASMS_DIR)*.s $(TARGET)
+	rm -rf $(OBJS_DIR)*.o $(ASMS_DIR)*.s $(TARGET_DIR)$(TARGET_CORE)*
 
