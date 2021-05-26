@@ -1,4 +1,5 @@
-/* ==============================================================================
+/* =============================================================================
+
    Copyright (C) 2020 Valerii Sukhorukov.
    All Rights Reserved.
 
@@ -20,7 +21,8 @@
    OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
    SOFTWARE.
 
-============================================================================== */
+================================================================================
+*/
 
 #ifndef MOSAICSC_C4_H
 #define MOSAICSC_C4_H
@@ -29,8 +31,6 @@
 #include "base_component.h"
 
 namespace MosaicSC {
-
-using namespace Utils::Common;
 
 template <>
 struct C<4> : public BaseC {
@@ -42,7 +42,7 @@ struct C<4> : public BaseC {
     }};
 
     static constexpr std::array<Interactor,7> phb {{
-         {Ornt::up, Ornt::up, 1, {-1, -2}, nullptr, "04 01 a"},
+        {Ornt::up, Ornt::up, 1, {-1, -2}, nullptr, "04 01 a"},
         {Ornt::up, Ornt::up, 1, {-1, -1}, nullptr, "04 01 b"},
         {Ornt::up, Ornt::up, 1, {-1,  0}, nullptr, "04 01 c"},
         {Ornt::up, Ornt::up, 2, {-1,  0}, nullptr, "04 02  "},
@@ -63,39 +63,40 @@ struct C<4> : public BaseC {
     std::array<int, itr.size()> conn;
 
     explicit C(
-            const szt ind,
-            const Ornt::T di,
-            const A2<szt>& pos
-        ) noexcept;
+        szt ind,
+        Ornt::T di,
+        const A2<szt>& pos
+    ) noexcept;
 
     static A2<szt> initialize(
-                    const A2<szt>&,
-                    vec2<szt>&,
-                    vec2<Ornt::T>&,
-                    const szt
-                ) noexcept;
+        const A2<szt>&,
+        vec2szt&,
+        vec2ort&,
+        szt
+    ) noexcept;
 
     static real hamming_dist(const szt,
-                      const szt,
-                      const Ornt::T,
-                      const vec2<szt>&,
-                      const vec2<Ornt::T>&,
-                      const szt[]
-                ) noexcept;
+        szt,
+        Ornt::T,
+        const vec2szt&,
+        const vec2ort&,
+        const szt[]
+    ) noexcept;
     
     void set_conn(
-            const vec2<szt>& tp,
-            const szt L[]
-        ) noexcept final;
-    int get_conn(const szt h) noexcept final { return conn[h]; };
+        const vec2szt& tp,
+        const szt L[]
+    ) noexcept final;
+
+    int get_conn(szt h) noexcept final;
 
     static bool node_is_occupied(
-                    const szt,
-                    const szt,
-                    const vec2<szt>&,
-                    const vec2<Ornt::T>&,
-                    const szt[]
-                ) noexcept;
+        szt,
+        szt,
+        const vec2szt&,
+        const vec2ort&,
+        const szt[]
+    ) noexcept;
                                   
     void write(std::ofstream &ofs) const final;
 };

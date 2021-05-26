@@ -1,4 +1,5 @@
-/* ==============================================================================
+/* =============================================================================
+
    Copyright (C) 2020 Valerii Sukhorukov.
    All Rights Reserved.
 
@@ -20,7 +21,8 @@
    OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
    SOFTWARE.
 
-============================================================================== */
+================================================================================
+*/
 
 #include <string>
 #include <vector>
@@ -33,7 +35,6 @@
 #include "parameters.h"
 
 namespace MosaicSC {
-using namespace Utils::Common;
 
 Parameters::
 Parameters( const std::string& configFname )
@@ -124,8 +125,8 @@ initialize_arrayparam( const szt len,
         if (e == std::string::npos) e = value.length();
         const std::string val {value.substr(0, e)};
         if (val.length() < 1) {
-            std::cout << "Error in config file: Number of elelments in " + parname
-                      << " is smaller than " << len
+            std::cout << "Error in config file: Number of elelments in "
+                      << parname << " is smaller than " << len
                       << std::endl;
             exit(0);
         }

@@ -1,4 +1,5 @@
-/* ==============================================================================
+/* =============================================================================
+
    Copyright (C) 2020 Valerii Sukhorukov.
    All Rights Reserved.
 
@@ -20,74 +21,73 @@
    OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
    SOFTWARE.
 
-============================================================================== */
+================================================================================
+*/
 
-#include <string>
-#include <iostream> 
+#include <iostream>
 #include <mutex>
+#include <string>
 
 #include "definitions.h"
 #include "parameters.h"
 #include "base_component.h"
-//#include "c0.h"
-//#include "c1.h"
-//#include "c2.h"
-//#include "c3.h"
-//#include "c4.h"
-//#include "sc.h"
 #include "potts.h"
 
-using namespace MosaicSC;
-
-void runThread( const szt,
-                const szt,
-                const szt,
+void runThread( Utils::Common::szt,
+                Utils::Common::szt,
+                Utils::Common::szt,
                 std::mutex&,
                 const std::string&,
-                const Parameters& );
+                const MosaicSC::Parameters& );
 
 int main( int argc, const char* argv[] ) 
 {
-    if (argc < 2)
-        return Exceptions::simple("Error: The path to config file is missing.");
 
-    auto workingDir = std::string(argv[1]) + SLASH;
+    if (argc < 2)
+        return Utils::Common::Exceptions::simple(
+                "Error: The path to config file is missing.");
+
+    auto workingDir = std::string(argv[1]) + Utils::Common::SLASH;
 
     auto configFname = workingDir + "config.txt";
-    if (!file_exists(configFname))
-        return Exceptions::simple("Config file not accessible in with path " + configFname);
+    if (!Utils::Common::file_exists(configFname))
+        return Utils::Common::Exceptions::simple(
+        "Config file not accessible in with path " + configFname);
 
-    Parameters sps {configFname};
+    MosaicSC::Parameters sps {configFname};
 
     sps.workingDir_in = workingDir;
-    if (!directory_exists(sps.workingDir_in))
-        return Exceptions::simple("No directory for input files is available");
+    if (!Utils::Common::directory_exists(sps.workingDir_in))
+        return Utils::Common::Exceptions::simple(
+                    "No directory for input files is available");
 
     sps.workingDir_out = workingDir;
-    if (!directory_exists(sps.workingDir_out))
-        return Exceptions::simple("No directory for output files is available");
+    if (!Utils::Common::directory_exists(sps.workingDir_out))
+        return Utils::Common::Exceptions::simple(
+                    "No directory for output files is available");
 
     auto seedfilename = workingDir+"seeds";
-    if (!file_exists(seedfilename))
-        RandFactory::make_seed(seedfilename, nullptr);
+    if (!Utils::Common::file_exists(seedfilename))
+        MosaicSC::RandFactory::make_seed(seedfilename, nullptr);
 
-    BaseC::set_statics(&sps);
+    MosaicSC::BaseC::set_statics(&sps);
 
     std::mutex mtx;
 
     const auto ntasks = sps.RUN_end - (sps.RUN_ini - 1);
 
-    if ((CUDA && ntasks > 1))
-        return Exceptions::simple(
-            "Using CUDA is only compatible with single-threaded execution.\n Please set nthreads = 1");
+    if ((MOSAICSC_CUDA && ntasks > 1))
+        return Utils::Common::Exceptions::simple(
+            std::string("Using CUDA is only compatible with ") +
+            "single-threaded execution.\nPlease set nthreads = 1");
 
-    Threads th {sps.RUN_ini,
-                ntasks,
-                0,
-                Threads::Weights::Equal,
-                sps.nthreads};
+    Utils::Common::Threads th {sps.RUN_ini,
+                               ntasks,
+                               0,
+                               Utils::Common::Threads::Weights::Equal,
+                               sps.nthreads};
 
-    for (szt ith=0; ith<th.thr.size(); ith++)
+    for (Utils::Common::szt ith=0; ith<th.thr.size(); ith++)
         th.thr[ith] = std::thread( runThread, th.i1[ith],
                                               th.i2[ith],
                                               ith,
@@ -99,12 +99,12 @@ int main( int argc, const char* argv[] )
     return EXIT_SUCCESS;
 }
 
-void runThread( const szt ii1,
-                const szt ii2,
-                const szt ith,
+void runThread( const Utils::Common::szt ii1,
+                const Utils::Common::szt ii2,
+                const Utils::Common::szt ith,
                 std::mutex& mtx,
                 const std::string& seedfilename,
-                const Parameters& sps )
+                const MosaicSC::Parameters& sps )
 {
     for (auto ii=ii1; ii<ii2; ii++) {
 
@@ -117,17 +117,18 @@ void runThread( const szt ii1,
                 if (sps.resume) logfile.open(logfname, std::ios::app);
                 else            logfile.open(logfname, std::ios::trunc);
             } catch (const std::ifstream::failure&) {
-                Exceptions::simple("Cannot open file: " + logfname);
+                Utils::Common::Exceptions::simple(
+                    "Cannot open file: " + logfname);
             }
             std::cout.precision(6);
             std::cout.setf(std::ios::scientific);
             logfile.precision(6);
             logfile.setf(std::ios::scientific);
 
-            Msgr msgr {&std::cout, &logfile};
+            Utils::Common::Msgr msgr {&std::cout, &logfile};
             sps.print(msgr);
             
-            StopWatch stopwatch;
+            Utils::Common::StopWatch stopwatch;
             stopwatch.start();
 
             char hostname[1024];
@@ -136,11 +137,12 @@ void runThread( const szt ii1,
                        " started: " + stopwatch.start.str +
                        " on " + std::string(hostname));
 
-            auto R = std::make_unique<RandFactory>(seedfilename, ii, msgr);
+            auto R = std::make_unique<MosaicSC::RandFactory>(
+                                                    seedfilename, ii, msgr);
 
         mtx.unlock();
 
-        Potts sim {sps, mtx, runname, ith, R, msgr};
+        MosaicSC::Potts sim {sps, mtx, runname, ith, R, msgr};
         sim.run();
 
         mtx.lock();

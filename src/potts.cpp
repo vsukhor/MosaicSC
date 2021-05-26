@@ -1,4 +1,4 @@
-/* ==============================================================================
+/* =============================================================================
    Copyright (C) 2020 Valerii Sukhorukov.
    All Rights Reserved.
 
@@ -20,7 +20,8 @@
    OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
    SOFTWARE.
 
-============================================================================== */
+================================================================================
+*/
 
 #include <iostream>
 #include <fstream>
@@ -32,8 +33,6 @@
 
 namespace MosaicSC {
 
-using namespace Utils::Common;
-    
 Potts::
 Potts( const Parameters& sps,
        std::mutex& mtx,
@@ -50,11 +49,11 @@ Potts( const Parameters& sps,
     , io {this}
 {
     mtx.lock();
-        // max number of row nodes occupied:
+        // Max number of row nodes occupied:
         const auto maxn = std::max({
-                szt((3*sps.Ntot[0] + sps.Ntot[1]) / 2) + 1,        // row 1 or 4
-                sps.Ntot[2] + szt(sps.Ntot[3] / 2) + 1});        // row 2
-        // lattice dimensions:
+                szt((3*sps.Ntot[0] + sps.Ntot[1]) / 2) + 1,   // row 1 or 4
+                sps.Ntot[2] + szt(sps.Ntot[3] / 2) + 1});     // row 2
+        // Lattice dimensions:
         L[0] = numRows;
         L[1] = static_cast<szt>(sps.dilution * maxn);
         msgr.print("Lattice dimensions " + STR(L[0]) + " " + STR(L[1]));
@@ -65,22 +64,26 @@ Potts( const Parameters& sps,
         for (szt h=1; h<BaseC::NT; h++)
             conNbT[h].resize(get_nbtmax(h));
         
-        // # of empty nodes at lattices available for C1, ..., C4:
-        std::vector<szt> nemp_T = { 2*L[1] - sps.Ntot[0] - sps.Ntot[1],   // C1
-                                     2*L[1] - sps.Ntot[0] - sps.Ntot[1],   // C2
-                                       L[1] - sps.Ntot[2],                    // C3
-                                       2*L[1] - sps.Ntot[3] };                // C4
+        // Number of empty nodes at lattices available for C1, ..., C4:
+        std::vector<szt> nemp_T = { 2*L[1] - sps.Ntot[0] - sps.Ntot[1],  // C1
+                                    2*L[1] - sps.Ntot[0] - sps.Ntot[1],  // C2
+                                    L[1] - sps.Ntot[2],                  // C3
+                                    2*L[1] - sps.Ntot[3] };              // C4
         
         for (szt i = 1; i<BaseC::NT; i++) {
-            ocPos[i] = Vec2::make<uint>(sps.Ntot[i-1], 2);
-            emPos[i] = Vec2::make<uint>(nemp_T[i-1], 2);
+            ocPos[i] = Utils::Common::Vec2::make<uint>(sps.Ntot[i-1], 2);
+            emPos[i] = Utils::Common::Vec2::make<uint>(nemp_T[i-1], 2);
         }
 
-        // create lattice-size masks:
-        tp    = Vec2::make<szt>(L[0], L[1]);                // particle types
-        di    = Vec2::make<Ornt::T>(L[0], L[1], Ornt::nd);    // particle orientations
-        gE    = Vec2::make<real>(L[0], L[1]);                // energies
-        mskSC = Vec2::make<szt>(L[0], L[1]);                // aggregation classes
+        // Create lattice-size masks:
+        // particle types
+        tp    = Utils::Common::Vec2::make<szt>(L[0], L[1]);
+        // particle orientations
+        di    = Utils::Common::Vec2::make<Ornt::T>(L[0], L[1], Ornt::nd);
+        // energies
+        gE    = Utils::Common::Vec2::make<real>(L[0], L[1]);
+        // aggregation classes
+        mskSC = Utils::Common::Vec2::make<szt>(L[0], L[1]);
         
         it = sps.resume
            ? io.readin_lattice()
@@ -92,15 +95,17 @@ Potts( const Parameters& sps,
 szt Potts::
 initialize_lattices() noexcept
 {
-    // occupy corresponding number of lattice nodes with particles;
-    // this initializes 'tp' and 'di' without creating the C<> objects themselves:
+    // Occupy corresponding number of lattice nodes with particles.
+    // This initializes 'tp' and 'di' without creating the C<>
+    // objects themselves:
     auto pos = C<1>::initialize({{0, 0}}, tp, di, L[1]);
     C<2>::initialize(pos, tp, di, L[1]);
     auto pos3 = C<3>::initialize(0, tp, di);
     C<4>::initialize({{1, pos3}}, tp, di, L[1]);
 
-    // initialize convenience matrixes 'ocPos' and 'emPos';
-    // 'cOcc' and 'cEmp' are counters of occupied and empty lattice nodes respectively:
+    // Initialize convenience matrixes 'ocPos' and 'emPos';
+    // 'cOcc' and 'cEmp' are counters of occupied and empty
+    // lattice nodes respectively:
     for (uint e=1; e<BaseC::NT; e++) {
         szt cOcc {};
         szt cEmp {};
@@ -138,28 +143,29 @@ run() noexcept
         if (t1old == t2old) continue;
 
         const auto t1new = t2old;
-//        const auto d1new = (i1 < 2 || t2old == 0 || t2old == 3) ? 0 : 1;
-        const auto d1new = (i1 == i2 || t2old == 0 || t2old == 3) ? d2old : Ornt::usd(d2old);
+        const auto d1new = (i1 == i2 || t2old == 0 || t2old == 3)
+                         ? d2old : Ornt::usd(d2old);
 
         const auto t2new = t1old;
-//        const auto d2new = (i2 < 2 || t1old == 0 || t1old == 3) ? 0 : 1;
-        const auto d2new = (i1 == i2 || t1old == 0 || t1old == 3) ? d1old : Ornt::usd(d1old);
+        const auto d2new = (i1 == i2 || t1old == 0 || t1old == 3)
+                         ? d1old : Ornt::usd(d1old);
 
-        // energies at the original configuration:
+        // Energies at the original configuration:
         const auto e1old = hamming_dist(t1old, d1old, i1, j1);
         const auto e2old = hamming_dist(t2old, d2old, i2, j2);
-        // assume a successful move: swap the particles:
+        // Assume a successful move: swap the particles:
         tp[i1][j1] = t1new;    di[i1][j1] = d1new;
         tp[i2][j2] = t2new;    di[i2][j2] = d2new;
-        // calculate the new energies and decide based on the energy difference 
+        // Calculate the new energies and decide based on the energy difference
         // between the old and new configurations:
         if (const auto e1new = hamming_dist(t1new, d1new, i1, j1);
-            e1new < INF<real>) {
+            e1new < Utils::Common::INF<real>) {
             if (const auto e2new = hamming_dist(t2new, d2new, i2, j2);
-                e2new < INF<real>) {
+                e2new < Utils::Common::INF<real>) {
                 // Metropolis condition on energy difference:
                 if (const auto dE = e1new + e2new - e1old - e2old;
-                    dE < zero<real> || rf->r01u() < std::exp(-sps.beta * dE)) {
+                    dE < Utils::Common::zero<real> ||
+                    rf->r01u() < std::exp(-sps.beta * dE)) {
                     // the move is accepted: increment
                     if (it % sps.logfreq == 0)
                         io.output(0, it, i1, j1, i2, j2,
@@ -168,17 +174,17 @@ run() noexcept
                                   e1old, e2old, e1new, e2new, dE);
                     it++;
                 }
-                else { // the move is rejected: swap the particles back:
+                else { // The move is rejected: swap the particles back:
                     tp[i1][j1] = t1old;    di[i1][j1] = d1old;
                     tp[i2][j2] = t2old;    di[i2][j2] = d2old;
                 }
             }
-            else { // the move is rejected: swap the particles back:
+            else { // The move is rejected: swap the particles back:
                 tp[i1][j1] = t1old;    di[i1][j1] = d1old;
                 tp[i2][j2] = t2old;    di[i2][j2] = d2old;
             }
         }
-        else { // the move is rejected: swap the particles back:
+        else { // The move is rejected: swap the particles back:
             tp[i1][j1] = t1old;    di[i1][j1] = d1old;
             tp[i2][j2] = t2old;    di[i2][j2] = d2old;
         }
@@ -190,21 +196,21 @@ void Potts::
 choose_node_pair( uint& i1, uint& i2,
                   uint& j1, uint& j2 ) const noexcept
 {
-    // choose the 1st node among the whole lattice L[0]*L[1]:
+    // Choose the 1st node among the whole lattice L[0]*L[1]:
     const auto i0 = rf->uniform0(static_cast<uint>(V));
     i1 = i0 / static_cast<uint>(L[1]);           // integer division!
     j1 = i0 - i1 * static_cast<uint>(L[1]);
 
-    // the 2nd node is of the type among nodes on type-specific rows:
+    // The 2nd node is of the type among nodes on type-specific rows:
     if (const auto t1 = tp[i1][j1];
         t1 > 0) {
-        // the 1st node is occupied -> the 2nd node should be empty
+        // The 1st node is occupied -> the 2nd node should be empty:
         const auto q2 = rf->uniform0(emPos[t1].size());
         i2 = emPos[t1][q2][0];
         j2 = emPos[t1][q2][1];
     }
     else {
-        // the 1st node is empty -> the 2nd node should be occupied
+        // The 1st node is empty -> the 2nd node should be occupied:
         const auto rt = rowTypes[i1];
         if (rt.size() == 1) {
             const auto q2 = rf->uniform0(ocPos[rt[0]].size());
@@ -233,7 +239,7 @@ hamming_dist( const szt t,
               const szt j ) const noexcept
 {
     XASSERT(t<=Parameters::numBasicTypes, "Type not found for t = " + STR(t));
-    if (t == 0) return zero<real>;
+    if (t == 0) return Utils::Common::zero<real>;
     if (t == 4) return C<4>::hamming_dist(i, j, d, tp, di, L);
     if (t == 2) return C<2>::hamming_dist(i, j, d, tp, di, L);
     if (t == 3) return C<3>::hamming_dist(i, j, d, tp, di, L);
@@ -256,9 +262,9 @@ massvarSC() noexcept
     A2<real[BaseC::NT]> v;
     for (szt i=0; i<BaseC::NT; i++) {
         // 0: mean of SC sizes; 1-4: mean of # of corresponding monomers per SC
-        v[0][i] = avg(s[i]);
+        v[0][i] = Utils::Common::avg(s[i]);
         // var of the same
-        v[1][i] = var(s[i]);
+        v[1][i] = Utils::Common::var(s[i]);
     }
     return v;
 }
@@ -277,16 +283,16 @@ void Potts::
 eTot() noexcept
 {
     set_gE();
-    std::fill(cE.begin(), cE.end(), zero<real>);
+    std::fill(cE.begin(), cE.end(), Utils::Common::zero<real>);
     for (szt i=0; i<L[0]; i++)
         for (szt j=0; j<L[1]; j++)
-            cE[tp[i][j]] += gE[i][j] / two<real>;
+            cE[tp[i][j]] += gE[i][j] / Utils::Common::two<real>;
 }
 
 void Potts::
 set_gE() noexcept
 {
-    Vec2::fill<real>(gE, zero<real>);
+    Utils::Common::Vec2::fill<real>(gE, Utils::Common::zero<real>);
     for (szt i=0; i<L[0]; i++)
         for (szt j=0; j<L[1]; j++)
             gE[i][j] = hamming_dist(tp[i][j], di[i][j], i, j);
@@ -295,7 +301,7 @@ void Potts::
 setSCs() noexcept
 {
     scs.clear();
-    Vec2::fill<szt>(mskSC, zero<szt>);
+    Utils::Common::Vec2::fill<szt>(mskSC, Utils::Common::zero<szt>);
     for (szt i=0; i<L[0]; i++)
         for (szt j=0; j<L[1]; j++)
             if (!mskSC[i][j] && tp[i][j]) {
@@ -363,8 +369,9 @@ set_connectivity() noexcept
                     su += oo->get_conn(h);
             conNbT[k][h] = (n > 0) ? static_cast<real>(su) / n : 0;
         }
-        // mean fraction of all slots a complex of type k posesses that are occupied:
-        conCT[k] = (n > 0) ? avg(conNbT[k]) : 0;
+        // Mean fraction of all slots a complex of type k posesses
+        // that are occupied:
+        conCT[k] = (n > 0) ? Utils::Common::avg(conNbT[k]) : 0;
     }
 }
 
@@ -372,4 +379,4 @@ szt Potts::L[2];
 
 szt Potts::V;
 
-}   // namespace MosaicSC
+}  // namespace MosaicSC

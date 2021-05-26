@@ -1,4 +1,5 @@
-/* ==============================================================================
+/* =============================================================================
+
    Copyright (C) 2020 Valerii Sukhorukov.
    All Rights Reserved.
 
@@ -20,7 +21,8 @@
    OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
    SOFTWARE.
 
-============================================================================== */
+================================================================================
+*/
 
 #ifndef MOSAICSC_IO_H
 #define MOSAICSC_IO_H
@@ -35,7 +37,6 @@
 #include "definitions.h"
 #include "parameters.h"
 #include "base_component.h"
-//#include "c0.h"
 #include "c1.h"
 #include "c2.h"
 #include "c3.h"
@@ -44,66 +45,61 @@
 
 namespace MosaicSC {
 
-using namespace Utils::Common;
-
 class Potts;
 
 class IO {
 
     friend class Potts;
 
-    IO(Potts* host) noexcept;        // The only constructor
+    IO(Potts* host) noexcept;  // The only constructor
 
     static constexpr szt screenWidth {70};
     const Parameters&    sps;
     const std::string&   runname;
 
-    Potts*                     host;
-    Msgr&                      msgr;
-    std::mutex&                mtx;
-    const szt                 (&L)[2];    // grid dimensions: nrows, ncols
+    Potts*                    host;
+    Msgr&                     msgr;
+    std::mutex&               mtx;
+    const szt                (&L)[2];    // grid dimensions: nrows, ncols
     const std::vector<SC<BaseC>>& scs;
-    const vec2<szt>&           mskSC;
-    vec2<szt>&                 tp;        // grid node complex types
-    vec2<Ornt::T>&             di;        // grid node orientations
-    const std::vector<real>&   cE;        // complex energy values
-    const vec2<real>&          gE;        // grid energy valuse
+    const vec2szt&           mskSC;
+    vec2szt&                 tp;        // grid node complex types
+    vec2ort&                 di;        // grid node orientations
+    const std::vector<real>& cE;        // complex energy values
+    const vec2real&          gE;        // grid energy valuse
 
-    void print_lattice(const szt, const szt,
-                       const szt, const szt) const noexcept;
-    void print_lattice(const szt, const szt, const szt,
-                       const szt, const szt, const szt) const noexcept;
+    void print_lattice(szt, szt, szt, szt) const noexcept;
+    void print_lattice(szt, szt, szt,
+                       szt, szt, szt) const noexcept;
     void print_orient() const noexcept;
-    void print_orient(const szt, const szt) const noexcept;
-    void print_gE_color(const szt, const szt, const szt,
-                        const szt) const noexcept;
-    void print_gE_bw(const szt, const szt, const szt,
-                     const szt) const noexcept;
+    void print_orient(szt, szt) const noexcept;
+    void print_gE_color(szt, szt, szt, szt) const noexcept;
+    void print_gE_bw(szt, szt, szt, szt) const noexcept;
     void print_mskSC() const noexcept;
-    void print_mskSC(const szt, const szt) const noexcept;
+    void print_mskSC(szt, szt) const noexcept;
 
-    void logline( std::ostream&, const szt,
-                  const szt, const szt, const szt, const szt,
-                  const szt, const Ornt::T, const szt, const Ornt::T,
-                  const szt, const Ornt::T, const szt, const Ornt::T,
-                  const real, const real, const real,
-                  const real, const real ) const noexcept;
+    void logline(std::ostream&, szt,
+                 szt, szt, szt, szt,
+                 szt, Ornt::T, szt, Ornt::T,
+                 szt, Ornt::T, szt, Ornt::T,
+                 real, real, real,
+                 real, real) const noexcept;
 
-    void output( const bool, const szt,
-                 const szt, const szt, const szt,
-                 const szt, const szt, const Ornt::T,
-                 const szt, const Ornt::T, const szt,
-                 const Ornt::T, const szt, const Ornt::T,
-                 const real, const real, const real,
-                 const real, const real) const noexcept;
+    void output(bool, szt,
+                szt, szt, szt,
+                szt, szt, Ornt::T,
+                szt, Ornt::T, szt,
+                Ornt::T, szt, Ornt::T,
+                real, real, real,
+                real, real) const noexcept;
 
-    int write(         const bool, const bool, const szt ) const;
-    int write_lattice( const bool, const bool, const szt ) const;
+    int write(        bool, bool, szt) const;
+    int write_lattice(bool, bool, szt) const;
 
     szt readin_lattice();
 
 };
 
-}   // namespace MosaicSC
+}  // namespace MosaicSC
 
 #endif // MOSAICSC_IO_H

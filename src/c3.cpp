@@ -1,4 +1,5 @@
-/* ==============================================================================
+/* =============================================================================
+
    Copyright (C) 2020 Valerii Sukhorukov.
    All Rights Reserved.
 
@@ -20,14 +21,13 @@
    OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
    SOFTWARE.
 
-============================================================================== */
+================================================================================
+*/
 
 #include "utils/common/misc.h"
 #include "c3.h"
 
 namespace MosaicSC {
-
-using namespace Utils::Common;
 
 C<3>::
 C( const szt ind,
@@ -36,10 +36,10 @@ C( const szt ind,
     : BaseC {ind, di, pos}
 {}
 
-szt C<3>::
+Utils::Common::szt C<3>::
 initialize( const szt posini,
-            vec2<szt>& tp,
-            vec2<Ornt::T>& di ) noexcept
+            vec2szt& tp,
+            vec2ort& di ) noexcept
 {
     szt pos {posini};
     for (szt j=0; j<BaseC::sps->Ntot[type-1]; j++) {
@@ -55,8 +55,8 @@ hamming_dist(
     const szt i,
     const szt j,
     const Ornt::T , //ornt,
-    const vec2<szt>& tp,
-    const vec2<Ornt::T>& di,
+    const vec2szt& tp,
+    const vec2ort& di,
     const szt L[]) noexcept
 {
     auto interacts = [&](auto& o) {
@@ -65,7 +65,7 @@ hamming_dist(
 
     for (const auto& o : phb)
         if (interacts(o))
-            return INF<real>;
+            return Utils::Common::INF<real>;
 
     real h {};
     for (const auto& o : itr)
@@ -75,8 +75,14 @@ hamming_dist(
     return BaseC::ph(h);
 }
 
+inline int  C<3>::
+get_conn( const szt h ) noexcept
+{
+    return conn[h];
+}
+
 inline void C<3>::
-set_conn( const vec2<szt>& tp,
+set_conn( const vec2szt& tp,
           const szt L[] ) noexcept
 {
     for (szt h=0; h<itr.size(); h++) {
@@ -92,8 +98,8 @@ bool C<3>::
 node_is_occupied(
               const szt i,
               const szt j,
-              const vec2<szt>& tp,
-              const vec2<Ornt::T>& , // di,
+              const vec2szt& tp,
+              const vec2ort& , // di,
               const szt L[] ) noexcept
 {
     if (tp[i][j] == type) return true;

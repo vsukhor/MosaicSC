@@ -1,4 +1,5 @@
-/* ==============================================================================
+/* =============================================================================
+
    Copyright (C) 2020 Valerii Sukhorukov.
    All Rights Reserved.
 
@@ -20,36 +21,35 @@
    OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
    SOFTWARE.
 
-============================================================================== */
+================================================================================
+*/
 
 #ifndef MOSAICSC_PARAMETERS_H
 #define MOSAICSC_PARAMETERS_H
 
+#include <iostream>
 #include <string>
 #include <vector>
-#include <iostream>
 #include <sstream>
-
-#include "utils/common/misc.h"
 
 #include "definitions.h"
 
 namespace MosaicSC {
-using namespace Utils::Common;
 
 struct Parameters {
 
-    std::string         workingDir_in,
-                        workingDir_out;
-    szt                 RUN_ini,
-                        RUN_end;
-    szt                 nthreads;
-    int                 resume;
-    szt                 Niter;
-    szt                 logfreq;
-    szt                 detailedfreq;
-    szt                 finaldetailed;
-    szt                 savefreq;
+    std::string workingDir_in,
+                workingDir_out;
+
+    szt RUN_ini;
+    szt RUN_end;
+    szt nthreads;
+    int resume;
+    szt Niter;
+    szt logfreq;
+    szt detailedfreq;
+    szt finaldetailed;
+    szt savefreq;
 
     static constexpr ulong numBasicTypes {4};
     std::vector<ulong>  Ntot;
@@ -61,26 +61,30 @@ struct Parameters {
 
     Parameters(const std::string&);
 
-    void print(Msgr&) const;
+    void print(Utils::Common::Msgr&) const;
 
 private:
 
     void load_config(const std::string&);
 
     template <typename K>
-    void initialize_arrayparam( const szt,
-                                std::string,
-                                const std::string&,
-                                std::vector<K>& );
+    void initialize_arrayparam(
+        const szt,
+        std::string,
+        const std::string&,
+        std::vector<K>&
+    );
 
     // If the line contains a valid parname-value combination,
     // returns true and combination, otherwise retruns false.
-    bool preprocess_line( std::ifstream&,
-                          std::string&,
-                          std::string& );
+    bool preprocess_line(
+        std::ifstream&,
+        std::string&,
+        std::string&
+    );
 
 };
 
-}   // namespace MosaicSC
+}  // namespace MosaicSC
 
 #endif // MOSAICSC_PARAMETERS_H

@@ -1,4 +1,5 @@
-/* ==============================================================================
+/* =============================================================================
+
    Copyright (C) 2020 Valerii Sukhorukov.
    All Rights Reserved.
 
@@ -20,7 +21,8 @@
    OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
    SOFTWARE.
 
-============================================================================== */
+================================================================================
+*/
 
 #ifndef MOSAICSC_SC_H
 #define MOSAICSC_SC_H
@@ -32,13 +34,15 @@
 
 namespace MosaicSC {
 
+using Utils::Common::szt;
+
 template <typename BC>
 struct SC {
 
-    szt                                  ind;
+    szt ind;
     std::array<std::vector<BC*>,BC::NT> c;
 
-    explicit SC(const szt ind);
+    explicit SC(szt ind);
 
     std::array<szt,BC::NT> get_numC();
 
@@ -46,7 +50,7 @@ struct SC {
 
 };
 
-// IMPLEMENTATION +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+// IMPLEMENTATION ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
 template <typename BC>
 SC<BC>::

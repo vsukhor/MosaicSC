@@ -1,4 +1,5 @@
-/* ==============================================================================
+/* =============================================================================
+
    Copyright (C) 2020 Valerii Sukhorukov.
    All Rights Reserved.
 
@@ -20,14 +21,13 @@
    OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
    SOFTWARE.
 
-============================================================================== */
+================================================================================
+*/
 
 #include "utils/common/misc.h"
 #include "c4.h"
 
 namespace MosaicSC {
-
-using namespace Utils::Common;
 
 C<4>::
 C( const szt ind,
@@ -36,10 +36,10 @@ C( const szt ind,
     : BaseC {ind, di, pos}
 {}
 
-A2<szt> C<4>::
+A2<Utils::Common::szt> C<4>::
 initialize( const A2<szt>& ini,
-            vec2<szt>& tp,
-            vec2<Ornt::T>& di,
+            vec2szt& tp,
+            vec2ort& di,
             const szt L1) noexcept
 {
     szt row {ini[0]};
@@ -64,8 +64,8 @@ hamming_dist(
         const szt i,
          const szt j,
          const Ornt::T ornt,
-         const vec2<szt>& tp,
-         const vec2<Ornt::T>& di,
+         const vec2szt& tp,
+         const vec2ort& di,
          const szt L[] ) noexcept
 {
 
@@ -78,7 +78,7 @@ hamming_dist(
 
     for (const auto& o : phb)
         if (interacts(o))
-            return INF<real>;
+            return Utils::Common::INF<real>;
 
     real h {};
     bool flag {};
@@ -87,16 +87,22 @@ hamming_dist(
             if (o.k == &k_1_4a)
                 flag = true;
             else if (o.k == &k_1_4b)
-                if (flag) return INF<real>;
+                if (flag) return Utils::Common::INF<real>;
             h += *o.k;
     }
 
     return BaseC::ph(h);
 }
 
+inline int  C<4>::
+get_conn( const szt h ) noexcept
+{
+    return conn[h];
+}
+
 void C<4>::
 set_conn(
-        const vec2<szt>& tp,
+        const vec2szt& tp,
         const szt L[] ) noexcept
 {
     for (szt h=0; h<itr.size(); h++) {
@@ -112,8 +118,8 @@ bool C<4>::
 node_is_occupied(
         const szt i,
         const szt j,
-        const vec2<szt>& tp,
-        const vec2<Ornt::T>& di,
+        const vec2szt& tp,
+        const vec2ort& di,
         const szt L[] ) noexcept
 {
     if (tp[i][j] == type) return true;

@@ -14,7 +14,7 @@ if __name__ == '__main__':
 
     # Set the directory to the log files and
     # the min, max Monte Carlo run indexes:
-    path = Path(__file__).parent.parent.parent / 'examples/example1/'
+    path = Path(__file__).parent.parent.parent / 'examples/example2/'
     run_first = 0
     run_last = 1
 

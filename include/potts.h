@@ -1,4 +1,5 @@
-/* ==============================================================================
+/* =============================================================================
+
    Copyright (C) 2020 Valerii Sukhorukov.
    All Rights Reserved.
 
@@ -20,7 +21,8 @@
    OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
    SOFTWARE.
 
-============================================================================== */
+================================================================================
+*/
 
 #ifndef MOSAICSC_POTTS_H
 #define MOSAICSC_POTTS_H
@@ -38,74 +40,88 @@
 
 namespace MosaicSC {
 
-using namespace Utils::Common;
-    
+
 struct Potts {
 
     friend class IO;
 
+    /// The only constructor.
     explicit Potts(
-                const Parameters&,
-                   std::mutex&,
-                   const std::string&,
-                   const szt,
-                   std::unique_ptr<RandFactory>&,
-                   Msgr&
-            ) noexcept;        // The only constructor
+        const Parameters&,
+        std::mutex&,
+        const std::string&,
+        szt,
+        std::unique_ptr<RandFactory>&,
+        Msgr&
+    ) noexcept;
           
     void run() noexcept;
 
 private:
 
     static constexpr real kB {static_cast<real>(1.38064852e-23)};    // J/K
-    static constexpr szt  screenWidth {70};
-    static constexpr szt numRows {5};
+    static constexpr szt  screenWidth {70};  ///> Assumed screen width.
+    static constexpr szt numRows {5};   ///< Number of rows in the lattice.
 
-    const vec2<uint>  typeRows {{}, {0,4}, {0,4}, {2}, {1,3}};
-    const vec2<uint>  rowTypes {{1,2}, {4}, {3}, {4}, {1,2}};
-    const Parameters& sps;
-    const std::string runname;
-    const szt         ithread;
+    /// Lattice row indexes for aech olecule type.
+    const vec2uint typeRows {{}, {0,4}, {0,4}, {2}, {1,3}};
+    /// Molecule types having access to each of the five lattice roes.
+    const vec2uint rowTypes {{1,2}, {4}, {3}, {4}, {1,2}};
 
-    Msgr&                                msgr;
-    std::mutex&                          mtx;
-    std::unique_ptr<RandFactory>&        rf;
+    const Parameters& sps;      ///< Simulation arameters.
+    const std::string runname;  ///< Run index as a string.
+    const szt         ithread;  ///< Index of CpU thread.
 
-    IO                                   io;
-    std::vector<SC<BaseC>>               scs;
-    vec2<szt>                            mskSC;
-    std::array<vec2<uint>,BaseC::NT>     ocPos, emPos;
-    vec2<szt>                            tp;         /// grid node complex types
-    vec2<Ornt::T>                        di;         /// grid node orientations
-    static szt                           L[2];       /// grid dimensions: nrows, ncols
-    static szt                           V;          /// grid total volume
-    std::vector<real>                    cE;         /// complex energy values
-    vec2<real>                           gE;         /// grid energy valuse
-    std::array<std::vector<real>,BaseC::NT> conNbT;  /// cconn averaged over particular complexes: is indexed by C type and slot
-    std::array<real,BaseC::NT>           conCT;      /// cconn averaged over particular complexes and slots: is indexed by C type
-    szt                                  it;         /// iteration index
+    Msgr& msgr;       ///< Thread-local reference to logging.
+
+    std::mutex& mtx;  ///< Thread-local reference to mutex.
+
+    ///< Thread-local reference to random factory..
+    std::unique_ptr<RandFactory>& rf;
+
+    IO io;  ///< Input/Output.
+
+    std::vector<SC<BaseC>> scs;    ///< Aggregates.
+    vec2szt                mskSC;  ///< Mask of aggregates over the grid.
+
+    std::array<vec2uint,BaseC::NT> ocPos, emPos;
+
+    vec2szt    tp;    ///< Grid node complex types.
+    vec2ort    di;    ///< Grid node orientations.
+    static szt L[2];  ///< Grid dimensions: nrows, ncols.
+    static szt V;     ///< Grid area.
+
+    std::vector<real> cE;  ///< Energies per complex.
+    vec2real          gE;  ///< Energies per lattice vertexes.
+
+    /// 'cconn' averaged over complexes: is indexed by C type and slot.
+    std::array<std::vector<real>,BaseC::NT> conNbT;
+    /// 'cconn' averaged over both complexes and slots: is indexed by C type.
+    std::array<real,BaseC::NT>              conCT;
+
+    szt it;  ///< Iteration index.
 
     szt initialize_lattices() noexcept;
 
     void choose_node_pair(
-                uint&,
-                uint&,
-                uint&,
-                uint&
-            ) const noexcept;
+        uint&,
+        uint&,
+        uint&,
+        uint&
+    ) const noexcept;
 
     real hamming_dist(
-                const szt,
-                const Ornt::T,
-                const szt,
-                const szt
-            ) const noexcept;
+        const szt,
+        const Ornt::T,
+        const szt,
+        const szt
+    ) const noexcept;
 
     void parce(
-            const szt,
-            const szt,
-            SC<BaseC>&
-        ) noexcept;
+        const szt,
+        const szt,
+        SC<BaseC>&
+    ) noexcept;
 
     A2<real[BaseC::NT]> massvarSC() noexcept;
 

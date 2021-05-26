@@ -1,4 +1,5 @@
-/* ==============================================================================
+/* =============================================================================
+
    Copyright (C) 2020 Valerii Sukhorukov.
    All Rights Reserved.
 
@@ -20,7 +21,8 @@
    OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
    SOFTWARE.
 
-============================================================================== */
+================================================================================
+*/
 
 #include <fstream>
 
@@ -30,8 +32,6 @@
 #include "base_component.h"
 
 namespace MosaicSC {
-
-using namespace Utils::Common;
 
 BaseC::
 BaseC( const szt ind,
@@ -58,7 +58,7 @@ set_statics( Parameters const *sps_ ) noexcept
     k_4_4 =  sps->rates_f[8];
 
     syn = sps->syn;
-    ph = (syn != one<real>)
+    ph = (syn != Utils::Common::one<real>)
        ? fun_hs
        : fun_h;
 }
@@ -69,8 +69,8 @@ is_occupied( const szt t,
             const szt i,
             const szt j,
             const long sh[2],
-            const vec2<szt>& tp,
-            const vec2<Ornt::T>& di,
+            const vec2szt& tp,
+            const vec2ort& di,
             const szt L[] ) noexcept
 {
     const A2<szt> p {position(i, j, sh, L)};
@@ -78,7 +78,7 @@ is_occupied( const szt t,
            di[p[0]][p[1]] == ornt;
 }
 
-A2<szt> BaseC::
+A2<Utils::Common::szt> BaseC::
 position( const szt i,
           const szt j,
           const long sh[2],

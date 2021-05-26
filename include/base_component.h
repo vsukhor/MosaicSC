@@ -1,4 +1,5 @@
-/* ==============================================================================
+/* =============================================================================
+
    Copyright (C) 2020 Valerii Sukhorukov.
    All Rights Reserved.
 
@@ -20,7 +21,8 @@
    OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
    SOFTWARE.
 
-============================================================================== */
+================================================================================
+*/
 
 #ifndef MOSAICSC_BASEC_H
 #define MOSAICSC_BASEC_H
@@ -34,11 +36,10 @@
 
 namespace MosaicSC {
 
-using namespace Utils::Common;
-
 struct Occupancy {
-    const Ornt::T so;        // orientation of the 1st component
-    const long    sh[2];     // shift
+
+    const Ornt::T so;      // orientation of the 1st component
+    const long    sh[2];   // shift
     const long    rv[2] {-sh[0], -sh[1]};
 
     constexpr auto
@@ -46,35 +47,40 @@ struct Occupancy {
     {
         return (rev) ? rv : sh;
     }
+
 };
 
 struct Interactor {
-    const Ornt::T so;        // orientation of the 1st component
-    const Ornt::T di;        // orientation of the 2nd component
-    const szt      t;        // type of the 2nd component
-    const long    sh[2];     // shift
-    const real*      k;      // rate
-    const char    name[8];
-    const long    rv[2] {-sh[0], -sh[1]};
+
+    const Ornt::T so;  ///< Orientation of the 1st component.
+    const Ornt::T di;  ///< Orientation of the 2nd component.
+
+    const szt t;  ///< Type of the 2nd component.
+
+    const long   sh[2];   ///< Shift.
+    const real*  k;       ///< Rate.
+    const char   name[8];
+    const long   rv[2] {-sh[0], -sh[1]};
 
     constexpr auto
     get_sh( const bool rev ) const noexcept
     {
         return (rev) ? rv : sh;
     }
+
 };
 
 struct BaseC {
 
     typedef real (*ppmf)(const real);
 
-    static constexpr uint NT {5};    // number of complex types
+    static constexpr uint NT {5};   // number of complex types
     static Parameters const* sps;
     static ppmf ph;
 
     const szt ind;
-    Ornt::T   di;        // ornt
-    A2<szt>   pos;       // i,j on the grid
+    Ornt::T   di;    // ornt
+    A2<szt>   pos;   // i,j on the grid
 
     static real k_1_1;
     static real k_1_3a;
@@ -89,45 +95,51 @@ struct BaseC {
     static real syn;
 
     explicit BaseC(
-                const szt,
-                   const Ornt::T,
-                   const A2<szt>& ) noexcept;
+        szt,
+        Ornt::T,
+        const A2<szt>&
+    ) noexcept;
 
     virtual ~BaseC() = default;
     
     static void set_statics(Parameters const*) noexcept;
 
     static bool is_occupied(
-                    const szt,
-                    const Ornt::T,
-                    const szt,
-                    const szt,
-                    const long[2],
-                    const vec2<szt>&,
-                    const vec2<Ornt::T>&,
-                    const szt[]
-                ) noexcept;
+        szt,
+        Ornt::T,
+        szt,
+        szt,
+        const long[2],
+        const Utils::Common::vec2<szt>&,
+        const Utils::Common::vec2<Ornt::T>&,
+        const szt[]
+    ) noexcept;
 
-    static real fun_hs(const real h) noexcept { return -std::pow(h, syn); };
-    static real fun_h(const real h) noexcept { return -h; };
+    static real fun_hs(const real h) noexcept {
+        return -std::pow(h, syn);
+    };
+
+    static real fun_h(const real h) noexcept {
+        return -h;
+    };
     
     static A2<szt> position(
-                        const szt,
-                        const szt,
-                        const long[2],
-                        const szt[2]
-                    ) noexcept;
+        szt,
+        szt,
+        const long[2],
+        const szt[2]
+    ) noexcept;
 
     virtual void set_conn(
-                    const vec2<szt>& tp,
-                    const szt L[]
-                ) noexcept = 0;
+        const Utils::Common::vec2<szt>& tp,
+        const szt L[]
+    ) noexcept = 0;
                 
-    virtual int get_conn(const szt h) noexcept = 0;
+    virtual int get_conn(szt h) noexcept = 0;
 
     virtual void write(std::ofstream&) const = 0;
 };
 
-}   // namespace MosaicSC
+}  // namespace MosaicSC
 
 #endif // MOSAICSC_BASEC_H

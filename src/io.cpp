@@ -1,4 +1,5 @@
-/* ==============================================================================
+/* =============================================================================
+
    Copyright (C) 2020 Valerii Sukhorukov.
    All Rights Reserved.
 
@@ -20,7 +21,8 @@
    OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
    SOFTWARE.
 
-============================================================================== */
+================================================================================
+*/
 
 #include <iostream>
 #include <fstream>
@@ -32,8 +34,6 @@
 #include "potts.h"
 
 namespace MosaicSC {
-
-using namespace Utils::Common;
 
 class Potts;
 
@@ -148,12 +148,13 @@ print_gE_color( const szt i1,
                 const szt i2,
                 const szt j2 ) const noexcept
 {
+    constexpr auto zeror = Utils::Common::zero<real>;
     for (szt i=0; i<L[0]; i++) {
         for (szt j=0; j<L[1]; j++) {
             auto cl {ANSI_FG_WHITE};
-            if (    tp[i][j] != 0)         cl = ANSI_FG_YELLOW;
-            if (    gE[i][j] < zero<real>) cl = ANSI_FG_BLUE;
-            else if(gE[i][j] > zero<real>) cl = ANSI_FG_RED;
+            if (    tp[i][j] != 0)    cl = ANSI_FG_YELLOW;
+            if (    gE[i][j] < zeror) cl = ANSI_FG_BLUE;
+            else if(gE[i][j] > zeror) cl = ANSI_FG_RED;
 //            auto cb = ANSI_BOLD_OFF;
             if ((i == i1 && j == j1) ||
                 (i == i2 && j == j2))
@@ -236,7 +237,7 @@ logline( std::ostream& ofs, const szt itt,
         << " eNew: " << e1new << " " << e2new
         << " dE " << dE;
     ofs << " cE "; for (const auto o : cE) ofs << o << " ";
-    ofs << "Etot " << avg(cE) << std::endl;
+    ofs << "Etot " << Utils::Common::avg(cE) << std::endl;
     ofs << " nSC " << scs.size();
 
     A2<real[BaseC::NT]> mv = host->massvarSC();
@@ -306,7 +307,7 @@ write( const bool startnew,
     std::ofstream ofs {fname, startnew ? std::ios::binary | std::ios::trunc
                                        : std::ios::binary | std::ios::app};
     if (ofs.fail())
-        throw Exceptions::Simple(
+        throw Utils::Common::Exceptions::Simple(
             "Error in write: Cannot open file: "+fname, &msgr);
 
     if (startnew) {
@@ -336,7 +337,7 @@ write_lattice( const bool startnew,
                           : std::ios::binary | std::ios::app;
     std::ofstream ofs {fname, flags};
     if (ofs.fail())
-        throw Exceptions::Simple(
+        throw Utils::Common::Exceptions::Simple(
                 "Error in write_lattice: Cannot open file: "+fname, &msgr);
 
     if (startnew) {
@@ -360,14 +361,14 @@ readin_lattice()
     auto fname = sps.workingDir_out + "lat_last_" + runname;
     std::ifstream ifs {fname, std::ios::binary};
     if(ifs.fail())
-        throw Exceptions::Simple(
+        throw Utils::Common::Exceptions::Simple(
             "Error in read_lattice: Cannot open file: " + fname, &msgr);
 
     szt l0, l1;
     ifs.read(reinterpret_cast<char*>(&l0), sizeof(szt));
     ifs.read(reinterpret_cast<char*>(&l1), sizeof(szt));
     if (l0 != L[0] || l1 != L[1])
-        throw Exceptions::Simple(
+        throw Utils::Common::Exceptions::Simple(
             "Error in read_lattice: Lattice dimensions do not agree: "+fname, &msgr);
 
     ifs.read(reinterpret_cast<char*>(&itt), sizeof(szt));
