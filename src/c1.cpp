@@ -25,12 +25,13 @@
 */
 
 #include "utils/common/misc.h"
+
 #include "c1.h"
 
 namespace MosaicSC {
 
 C<1>::
-C( const szt ind,
+C(  const szt ind,
     const Ornt::T di,
     const A2<szt>& pos ) noexcept
     : BaseC {ind, di, pos}

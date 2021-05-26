@@ -28,6 +28,7 @@
 #define MOSAICSC_C1_H
 
 #include "utils/common/constants.h"
+
 #include "base_component.h"
 
 namespace MosaicSC {

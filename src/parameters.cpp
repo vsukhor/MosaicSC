@@ -84,24 +84,25 @@ load_config( const std::string& fname )
 void Parameters::
 print( Msgr& msgr ) const
 {
-    msgr.print("Parameters: ", 1);
+    using Utils::Common::STR;
+    msgr.print("Parameters: ");
     msgr.print("workingDir_in: " + workingDir_in);
     msgr.print("workingDir_out: " + workingDir_out);
-    msgr.print<true>("RUN_ini = %d", RUN_ini);
-    msgr.print<true>("RUN_end = %d", RUN_end);
-    msgr.print<true>("nthreads = %d", nthreads);
-    msgr.print<true>("resume = %d", int(resume));
-    msgr.print<true>("Niter = %d", Niter);
-    msgr.print<true>("logfreq = %d", logfreq);
-    msgr.print<true>("detailedfreq = %d", detailedfreq);
-    msgr.print<true>("finaldetailed = %d", int(finaldetailed));
-    msgr.print<true>("savefreq = %d", savefreq);
+    msgr.print<true>("RUN_ini = " + STR(RUN_ini));
+    msgr.print<true>("RUN_end = " + STR(RUN_end));
+    msgr.print<true>("nthreads = " + STR(nthreads));
+    msgr.print<true>("resume = " + STR(int(resume)));
+    msgr.print<true>("Niter = " + STR(Niter));
+    msgr.print<true>("logfreq = " + STR(logfreq));
+    msgr.print<true>("detailedfreq = " + STR(detailedfreq));
+    msgr.print<true>("finaldetailed = " + STR(int(finaldetailed)));
+    msgr.print<true>("savefreq = " + STR(savefreq));
     msgr.print_vector("Ntot ", Ntot); msgr.print<true>("");
-    msgr.print<true>("dilution = %f", dilution);
-    msgr.print<true>("inum = %d", inum);
+    msgr.print<true>("dilution = " + STR(dilution));
+    msgr.print<true>("inum = " + STR(inum));
     msgr.print_vector("rates_f ", rates_f); msgr.print<true>("");
-    msgr.print<true>("syn = %f", syn);
-    msgr.print<true>("beta = %d", beta);
+    msgr.print<true>("syn = " + STR(syn));
+    msgr.print<true>("beta = " + STR(beta));
 }
 
 template<typename K>

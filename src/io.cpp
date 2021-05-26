@@ -80,22 +80,22 @@ print_lattice( const szt i1,
     std::cout << std::endl;
     for (szt i=0; i<L[0]; i++) {
         for (szt j=x0; j<x1; j++) {
-            auto cl = ANSI_RESET;
+            auto cl = Utils::Common::ANSI_RESET;
             if(      C<1>::node_is_occupied(i, j, tp, di, L))
-                cl = ANSI_BG_BLUE;
+                cl = Utils::Common::ANSI_BG_BLUE;
             else if (C<2>::node_is_occupied(i, j, tp, di, L))
-                cl = ANSI_BG_YELLOW;
+                cl = Utils::Common::ANSI_BG_YELLOW;
             else if (C<3>::node_is_occupied(i, j, tp, di, L))
-                cl = ANSI_BG_RED;
+                cl = Utils::Common::ANSI_BG_RED;
             else if (C<4>::node_is_occupied(i, j, tp, di, L))
-                cl = ANSI_BG_GREEN;
-//            auto cb = ANSI_BOLD_OFF;
+                cl = Utils::Common::ANSI_BG_GREEN;
+//            auto cb = Utils::Common::ANSI_BOLD_OFF;
             if ((i == i1 && j == j1) ||
                 (i == i2 && j == j2))
-                cl = ANSI_BG_MAGENTA; //ANSI_BOLD_ON;
+                cl = Utils::Common::ANSI_BG_MAGENTA; //ANSI_BOLD_ON;
             std::cout  << cl << tp[i][j] << "  ";
         }
-        std::cout << ANSI_RESET << std::endl;
+        std::cout << Utils::Common::ANSI_RESET << std::endl;
     }
     std::cout << std::endl;
 }
@@ -115,29 +115,30 @@ void IO::
 print_orient( const szt x0,
               const szt x1 ) const noexcept
 {
+    namespace Cmn = Utils::Common;
     std::cout << std::endl;
     for (szt i=0; i<L[0]; i++) {
         for (szt j=x0; j<x1; j++) {
-            auto cl {ANSI_RESET};
+            auto cl {Cmn::ANSI_RESET};
             auto sg = di[i][j] == Ornt::dw
                     ? "-" : di[i][j] == Ornt::up
                           ? "+" : di[i][j] == Ornt::no
                                   ? "0" : "o";
             if (C<3>::node_is_occupied(i, j, tp, di, L))
                 cl = (di[i][j] == Ornt::no)
-                   ? ANSI_BG_GREEN
-                   : ANSI_BG_YELLOW;
+                   ? Cmn::ANSI_BG_GREEN
+                   : Cmn::ANSI_BG_YELLOW;
             else if (C<1>::node_is_occupied(i, j, tp, di, L) ||
                      C<2>::node_is_occupied(i, j, tp, di, L) ||
                      C<4>::node_is_occupied(i, j, tp, di, L) ) {
                 cl = (di[i][j] == Ornt::up)
-                   ? ANSI_BG_RED
-                   : di[i][j] == Ornt::dw ? ANSI_BG_BLUE
-                                          : ANSI_BG_YELLOW;
+                   ? Cmn::ANSI_BG_RED
+                   : di[i][j] == Ornt::dw ? Cmn::ANSI_BG_BLUE
+                                          : Cmn::ANSI_BG_YELLOW;
             }
             std::cout << cl << sg << "  ";
         }
-        std::cout << ANSI_RESET << std::endl;
+        std::cout << Cmn::ANSI_RESET << std::endl;
     }
     std::cout << std::endl;
 }
@@ -148,20 +149,21 @@ print_gE_color( const szt i1,
                 const szt i2,
                 const szt j2 ) const noexcept
 {
-    constexpr auto zeror = Utils::Common::zero<real>;
+    namespace Cmn = Utils::Common;
+    constexpr auto zeror = Cmn::zero<real>;
     for (szt i=0; i<L[0]; i++) {
         for (szt j=0; j<L[1]; j++) {
-            auto cl {ANSI_FG_WHITE};
-            if (    tp[i][j] != 0)    cl = ANSI_FG_YELLOW;
-            if (    gE[i][j] < zeror) cl = ANSI_FG_BLUE;
-            else if(gE[i][j] > zeror) cl = ANSI_FG_RED;
-//            auto cb = ANSI_BOLD_OFF;
+            auto cl {Cmn::ANSI_FG_WHITE};
+            if (    tp[i][j] != 0)    cl = Cmn::ANSI_FG_YELLOW;
+            if (    gE[i][j] < zeror) cl = Cmn::ANSI_FG_BLUE;
+            else if(gE[i][j] > zeror) cl = Cmn::ANSI_FG_RED;
+//            auto cb = Cmn::ANSI_BOLD_OFF;
             if ((i == i1 && j == j1) ||
                 (i == i2 && j == j2))
-                cl = ANSI_FG_MAGENTA;//ANSI_BOLD_ON;
+                cl = Cmn::ANSI_FG_MAGENTA;//ANSI_BOLD_ON;
             std::cout << cl << gE[i][j] << " ";
         }
-        std::cout << ANSI_FG_WHITE << std::endl;
+        std::cout << Cmn::ANSI_FG_WHITE << std::endl;
     }
     std::cout << std::endl;
 }
@@ -196,10 +198,11 @@ void IO::
 print_mskSC(const szt x0,
             const szt x1) const noexcept
 {
+    namespace Cmn = Utils::Common;
     for (szt i=0; i<L[0]; i++) {
         for (szt j=x0; j<x1; j++) {
             auto s {""};
-            auto cl {ANSI_RESET};
+            auto cl {Cmn::ANSI_RESET};
             if (     mskSC[i][j] < 10) s = "  ";
             else if (mskSC[i][j] < 100) s = " ";
             else if (mskSC[i][j] < 1000) s = "";
@@ -207,10 +210,10 @@ print_mskSC(const szt x0,
                 C<2>::node_is_occupied(i, j, tp, di, L) ||
                 C<3>::node_is_occupied(i, j, tp, di, L) ||
                 C<4>::node_is_occupied(i, j, tp, di, L) )
-                cl = ANSI_INVERSE_ON;
+                cl = Cmn::ANSI_INVERSE_ON;
             std::cout << cl << mskSC[i][j] << s;
         }
-        std::cout << ANSI_RESET << std::endl;
+        std::cout << Cmn::ANSI_RESET << std::endl;
     }
     std::cout << std::endl;
 }
@@ -253,7 +256,7 @@ logline( std::ostream& ofs, const szt itt,
     for (const auto& o : host->conCT)
         ofs << o << " ";
     for (szt k=1; k<BaseC::NT; k++) {
-        ofs << " (" + STR(k) + ") ";
+        ofs << " (" + std::to_string(k) + ") ";
         for (const auto o : host->conNbT[k])
             ofs << o << " ";
     }

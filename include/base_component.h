@@ -36,7 +36,9 @@
 
 namespace MosaicSC {
 
-struct Occupancy {
+struct
+__attribute__((packed)) __attribute__((aligned(64)))
+Occupancy {
 
     const Ornt::T so;      // orientation of the 1st component
     const long    sh[2];   // shift
@@ -50,7 +52,9 @@ struct Occupancy {
 
 };
 
-struct Interactor {
+struct
+__attribute__((aligned(64)))
+Interactor {
 
     const Ornt::T so;  ///< Orientation of the 1st component.
     const Ornt::T di;  ///< Orientation of the 2nd component.
@@ -70,9 +74,11 @@ struct Interactor {
 
 };
 
-struct BaseC {
+struct
+ __attribute__((packed)) __attribute__((aligned(16)))
+BaseC {
 
-    typedef real (*ppmf)(const real);
+    using ppmf = real (*)(const real);
 
     static constexpr uint NT {5};   // number of complex types
     static Parameters const* sps;
@@ -95,14 +101,14 @@ struct BaseC {
     static real syn;
 
     explicit BaseC(
-        szt,
-        Ornt::T,
-        const A2<szt>&
+        szt ind,
+        Ornt::T di,
+        const A2<szt>& pos
     ) noexcept;
 
     virtual ~BaseC() = default;
     
-    static void set_statics(Parameters const*) noexcept;
+    static void set_statics(Parameters const* /*sps_*/) noexcept;
 
     static bool is_occupied(
         szt,

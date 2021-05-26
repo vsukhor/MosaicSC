@@ -42,29 +42,28 @@ void runThread( Utils::Common::szt,
 
 int main( int argc, const char* argv[] ) 
 {
-
     if (argc < 2)
         return Utils::Common::Exceptions::simple(
-                "Error: The path to config file is missing.");
+                "Error: The path to config file is missing.", nullptr);
 
     auto workingDir = std::string(argv[1]) + Utils::Common::SLASH;
 
     auto configFname = workingDir + "config.txt";
     if (!Utils::Common::file_exists(configFname))
         return Utils::Common::Exceptions::simple(
-        "Config file not accessible in with path " + configFname);
+        "Config file not accessible in with path " + configFname, nullptr);
 
     MosaicSC::Parameters sps {configFname};
 
     sps.workingDir_in = workingDir;
     if (!Utils::Common::directory_exists(sps.workingDir_in))
         return Utils::Common::Exceptions::simple(
-                    "No directory for input files is available");
+                    "No directory for input files is available", nullptr);
 
     sps.workingDir_out = workingDir;
     if (!Utils::Common::directory_exists(sps.workingDir_out))
         return Utils::Common::Exceptions::simple(
-                    "No directory for output files is available");
+                    "No directory for output files is available", nullptr);
 
     auto seedfilename = workingDir+"seeds";
     if (!Utils::Common::file_exists(seedfilename))
@@ -79,7 +78,7 @@ int main( int argc, const char* argv[] )
     if ((MOSAICSC_CUDA && ntasks > 1))
         return Utils::Common::Exceptions::simple(
             std::string("Using CUDA is only compatible with ") +
-            "single-threaded execution.\nPlease set nthreads = 1");
+            "single-threaded execution.\nPlease set nthreads = 1", nullptr);
 
     Utils::Common::Threads th {sps.RUN_ini,
                                ntasks,
@@ -110,7 +109,7 @@ void runThread( const Utils::Common::szt ii1,
 
         mtx.lock();
 
-            const auto runname = STR(ii);
+            const auto runname = std::to_string(ii);
             const auto logfname = sps.workingDir_out + "log_" + runname + ".txt";
             std::ofstream logfile;
             try {
@@ -118,14 +117,15 @@ void runThread( const Utils::Common::szt ii1,
                 else            logfile.open(logfname, std::ios::trunc);
             } catch (const std::ifstream::failure&) {
                 Utils::Common::Exceptions::simple(
-                    "Cannot open file: " + logfname);
+                    "Cannot open file: " + logfname, nullptr);
             }
             std::cout.precision(6);
             std::cout.setf(std::ios::scientific);
             logfile.precision(6);
             logfile.setf(std::ios::scientific);
 
-            Utils::Common::Msgr msgr {&std::cout, &logfile};
+            constexpr const int PRINT_PRECISION = 6;
+            Utils::Common::Msgr msgr {&std::cout, &logfile, PRINT_PRECISION};
             sps.print(msgr);
             
             Utils::Common::StopWatch stopwatch;

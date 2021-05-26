@@ -27,10 +27,10 @@
 #ifndef MOSAICSC_DEFINITIONS_H
 #define MOSAICSC_DEFINITIONS_H
 
-#include "utils/common/misc.h"
-#include "utils/common/threads.h"
-#include "utils/common/stop_watch.h"
 #include "utils/common/exceptions.h"
+#include "utils/common/misc.h"
+#include "utils/common/stop_watch.h"
+#include "utils/common/threads.h"
 
 #define MOSAICSC_FP32    ///< Comment this out to switch to double precision.
 #define MOSAICSC_CUDA 0  ///< Define MOSAICSC_CUDA > 0 to switch the GPU use off

@@ -25,6 +25,7 @@
 */
 
 #include "utils/common/misc.h"
+
 #include "c4.h"
 
 namespace MosaicSC {

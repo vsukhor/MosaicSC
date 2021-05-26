@@ -28,8 +28,8 @@
 
 #include "utils/common/misc.h"
 
-#include "parameters.h"
 #include "base_component.h"
+#include "parameters.h"
 
 namespace MosaicSC {
 
@@ -86,7 +86,7 @@ position( const szt i,
 {
     auto asError = [&](const long shi, const long shj) {
         const auto msg = "Error: in position(): shift not found for shi " +
-                          STR(shi) + ", shj " + STR(shj);
+                          std::to_string(shi) + ", shj " + std::to_string(shj);
         XASSERT(false, msg);
         return A2<szt> {};    // pro forma
     };
@@ -249,6 +249,5 @@ real BaseC::k_3_4b;
 real BaseC::k_4_4;
 real BaseC::syn;
 typename BaseC::ppmf BaseC::ph;
-constexpr uint BaseC::NT;
 
 }   // namespace MosaicSC

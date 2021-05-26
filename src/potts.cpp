@@ -56,7 +56,8 @@ Potts( const Parameters& sps,
         // Lattice dimensions:
         L[0] = numRows;
         L[1] = static_cast<szt>(sps.dilution * maxn);
-        msgr.print("Lattice dimensions " + STR(L[0]) + " " + STR(L[1]));
+        msgr.print("Lattice dimensions " +
+                    std::to_string(L[0]) + " " + std::to_string(L[1]));
         V = L[0]*L[1];
         
         cE = std::vector<real>(L[0]);        // energies per lattice row
@@ -69,21 +70,22 @@ Potts( const Parameters& sps,
                                     2*L[1] - sps.Ntot[0] - sps.Ntot[1],  // C2
                                     L[1] - sps.Ntot[2],                  // C3
                                     2*L[1] - sps.Ntot[3] };              // C4
-        
+
+        namespace Vec2 = Utils::Common::Vec2;
         for (szt i = 1; i<BaseC::NT; i++) {
-            ocPos[i] = Utils::Common::Vec2::make<uint>(sps.Ntot[i-1], 2);
-            emPos[i] = Utils::Common::Vec2::make<uint>(nemp_T[i-1], 2);
+            ocPos[i] = Vec2::make<uint>(sps.Ntot[i-1], 2, 0);
+            emPos[i] = Vec2::make<uint>(nemp_T[i-1], 2, 0);
         }
 
         // Create lattice-size masks:
         // particle types
-        tp    = Utils::Common::Vec2::make<szt>(L[0], L[1]);
+        tp    = Vec2::make<szt>(L[0], L[1], 0);
         // particle orientations
-        di    = Utils::Common::Vec2::make<Ornt::T>(L[0], L[1], Ornt::nd);
+        di    = Vec2::make<Ornt::T>(L[0], L[1], Ornt::nd);
         // energies
-        gE    = Utils::Common::Vec2::make<real>(L[0], L[1]);
+        gE    = Vec2::make<real>(L[0], L[1], 0);
         // aggregation classes
-        mskSC = Utils::Common::Vec2::make<szt>(L[0], L[1]);
+        mskSC = Vec2::make<szt>(L[0], L[1], 0);
         
         it = sps.resume
            ? io.readin_lattice()
@@ -238,8 +240,9 @@ hamming_dist( const szt t,
               const szt i,
               const szt j ) const noexcept
 {
-    XASSERT(t<=Parameters::numBasicTypes, "Type not found for t = " + STR(t));
-    if (t == 0) return Utils::Common::zero<real>;
+    namespace Cmn = Utils::Common;
+    XASSERT(t<=Parameters::numBasicTypes, "Type not found for t = " + Cmn::STR(t));
+    if (t == 0) return Cmn::zero<real>;
     if (t == 4) return C<4>::hamming_dist(i, j, d, tp, di, L);
     if (t == 2) return C<2>::hamming_dist(i, j, d, tp, di, L);
     if (t == 3) return C<3>::hamming_dist(i, j, d, tp, di, L);

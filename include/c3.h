@@ -28,6 +28,7 @@
 #define MOSAICSC_C3_H
 
 #include "utils/common/misc.h"
+
 #include "base_component.h"
 
 namespace MosaicSC {

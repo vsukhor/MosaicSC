@@ -28,18 +28,21 @@
 #define MOSAICSC_PARAMETERS_H
 
 #include <iostream>
+#include <sstream>
 #include <string>
 #include <vector>
-#include <sstream>
 
 #include "definitions.h"
 
 namespace MosaicSC {
 
-struct Parameters {
+struct __attribute__((packed)) __attribute__((aligned(128)))
+Parameters {
 
-    std::string workingDir_in,
-                workingDir_out;
+    static constexpr ulong numBasicTypes {4};
+
+    std::string workingDir_in;
+    std::string workingDir_out;
 
     szt RUN_ini;
     szt RUN_end;
@@ -51,15 +54,14 @@ struct Parameters {
     szt finaldetailed;
     szt savefreq;
 
-    static constexpr ulong numBasicTypes {4};
-    std::vector<ulong>  Ntot;
-    real                dilution;
-    uint                inum;
-    std::vector<real>   rates_f;
-    real                syn;
-    real                beta;
+    std::vector<ulong> Ntot;
+    real               dilution;
+    uint               inum;
+    std::vector<real>  rates_f;
+    real               syn;
+    real               beta;
 
-    Parameters(const std::string&);
+    explicit Parameters(const std::string&);
 
     void print(Utils::Common::Msgr&) const;
 
@@ -69,7 +71,7 @@ private:
 
     template <typename K>
     void initialize_arrayparam(
-        const szt,
+        szt,
         std::string,
         const std::string&,
         std::vector<K>&
