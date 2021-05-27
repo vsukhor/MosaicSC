@@ -31,7 +31,7 @@
 
 #include "base_component.h"
 
-namespace MosaicSC {
+namespace mosaicsc {
 
 template <>
 struct C<3> : public BaseC {
@@ -109,6 +109,6 @@ struct C<3> : public BaseC {
 
 };
 
-}   // namespace MosaicSC
+}   // namespace mosaicsc
 
 #endif // MOSAICSC_C3_H

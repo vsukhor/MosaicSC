@@ -31,7 +31,7 @@
 
 #include "base_component.h"
 
-namespace MosaicSC {
+namespace mosaicsc {
 
 template <>
 struct C<4> : public BaseC {
@@ -102,6 +102,6 @@ struct C<4> : public BaseC {
     void write(std::ofstream &ofs) const final;
 };
 
-}   // namespace MosaicSC
+}   // namespace mosaicsc
 
 #endif // MOSAICSC_C4_H

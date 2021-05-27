@@ -31,7 +31,7 @@
 
 #include "potts.h"
 
-namespace MosaicSC {
+namespace mosaicsc {
 
 Potts::
 Potts( const Parameters& sps,
@@ -382,4 +382,4 @@ szt Potts::L[2];
 
 szt Potts::V;
 
-}  // namespace MosaicSC
+}  // namespace mosaicsc

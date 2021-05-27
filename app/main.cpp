@@ -38,7 +38,7 @@ void runThread( Utils::Common::szt,
                 Utils::Common::szt,
                 std::mutex&,
                 const std::string&,
-                const MosaicSC::Parameters& );
+                const mosaicsc::Parameters& );
 
 int main( int argc, const char* argv[] ) 
 {
@@ -53,7 +53,7 @@ int main( int argc, const char* argv[] )
         return Utils::Common::Exceptions::simple(
         "Config file not accessible in with path " + configFname, nullptr);
 
-    MosaicSC::Parameters sps {configFname};
+    mosaicsc::Parameters sps {configFname};
 
     sps.workingDir_in = workingDir;
     if (!Utils::Common::directory_exists(sps.workingDir_in))
@@ -67,9 +67,9 @@ int main( int argc, const char* argv[] )
 
     auto seedfilename = workingDir+"seeds";
     if (!Utils::Common::file_exists(seedfilename))
-        MosaicSC::RandFactory::make_seed(seedfilename, nullptr);
+        mosaicsc::RandFactory::make_seed(seedfilename, nullptr);
 
-    MosaicSC::BaseC::set_statics(&sps);
+    mosaicsc::BaseC::set_statics(&sps);
 
     std::mutex mtx;
 
@@ -103,7 +103,7 @@ void runThread( const Utils::Common::szt ii1,
                 const Utils::Common::szt ith,
                 std::mutex& mtx,
                 const std::string& seedfilename,
-                const MosaicSC::Parameters& sps )
+                const mosaicsc::Parameters& sps )
 {
     for (auto ii=ii1; ii<ii2; ii++) {
 
@@ -137,12 +137,12 @@ void runThread( const Utils::Common::szt ii1,
                        " started: " + stopwatch.start.str +
                        " on " + std::string(hostname));
 
-            auto R = std::make_unique<MosaicSC::RandFactory>(
+            auto R = std::make_unique<mosaicsc::RandFactory>(
                                                     seedfilename, ii, msgr);
 
         mtx.unlock();
 
-        MosaicSC::Potts sim {sps, mtx, runname, ith, R, msgr};
+        mosaicsc::Potts sim {sps, mtx, runname, ith, R, msgr};
         sim.run();
 
         mtx.lock();

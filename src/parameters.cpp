@@ -34,7 +34,7 @@
 #include "definitions.h"
 #include "parameters.h"
 
-namespace MosaicSC {
+namespace mosaicsc {
 
 Parameters::
 Parameters( const std::string& configFname )
@@ -183,4 +183,4 @@ preprocess_line( std::ifstream& config,
     return true;
 }
 
-}   // namespace MosaicSC
+}   // namespace mosaicsc

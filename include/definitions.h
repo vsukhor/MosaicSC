@@ -41,7 +41,7 @@
     #include "utils/random/with_boost.h"
 #endif
 
-namespace MosaicSC {
+namespace mosaicsc {
 
 #ifdef MOSAICSC_FP32
     using real = float;
@@ -88,6 +88,6 @@ using vec2ort = Utils::Common::vec2<Ornt::T>;
 
 template<uint> class C {};
 
-} // namespace MosaicSC
+} // namespace mosaicsc
 
 #endif // MOSAICSC_DEFINITIONS_H

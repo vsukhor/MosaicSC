@@ -43,7 +43,7 @@
 #include "c4.h"
 #include "sc.h"
 
-namespace MosaicSC {
+namespace mosaicsc {
 
 class Potts;
 
@@ -100,6 +100,6 @@ class IO {
 
 };
 
-}  // namespace MosaicSC
+}  // namespace mosaicsc
 
 #endif // MOSAICSC_IO_H

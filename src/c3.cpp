@@ -28,7 +28,7 @@
 
 #include "c3.h"
 
-namespace MosaicSC {
+namespace mosaicsc {
 
 C<3>::
 C( const szt ind,
@@ -126,4 +126,4 @@ write( std::ofstream &ofs ) const
         ofs.write((char*const) &o, sizeof(o));
 }
 
-}   // namespace MosaicSC
+}  // namespace mosaicsc

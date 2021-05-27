@@ -38,7 +38,7 @@
 #include "sc.h"
 #include "io.h"
 
-namespace MosaicSC {
+namespace mosaicsc {
 
 
 struct Potts {
@@ -137,6 +137,6 @@ private:
 
 };
 
-}   // namespace MosaicSC
+}  // namespace mosaicsc
 
 #endif // MOSAICSC_POTTS_H

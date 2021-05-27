@@ -34,7 +34,7 @@
 #include "definitions.h"
 #include "parameters.h"
 
-namespace MosaicSC {
+namespace mosaicsc {
 
 struct
 __attribute__((packed)) __attribute__((aligned(64)))
@@ -146,6 +146,6 @@ BaseC {
     virtual void write(std::ofstream&) const = 0;
 };
 
-}  // namespace MosaicSC
+}  // namespace mosaicsc
 
 #endif // MOSAICSC_BASEC_H

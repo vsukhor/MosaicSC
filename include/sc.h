@@ -32,7 +32,7 @@
 
 #include "parameters.h"
 
-namespace MosaicSC {
+namespace mosaicsc {
 
 using Utils::Common::szt;
 
@@ -82,6 +82,6 @@ write( std::ofstream& ofs ) const
     }
 }
 
-}   // namespace MosaicSC
+}   // namespace mosaicsc
 
 #endif // MOSAICSC_SC_H

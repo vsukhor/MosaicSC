@@ -33,7 +33,7 @@
 #include "io.h"
 #include "potts.h"
 
-namespace MosaicSC {
+namespace mosaicsc {
 
 class Potts;
 
@@ -386,4 +386,4 @@ readin_lattice()
     return host->it + 1;
 }
 
-}   // namespace MosaicSC
+}  // namespace mosaicsc

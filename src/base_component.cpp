@@ -31,7 +31,7 @@
 #include "base_component.h"
 #include "parameters.h"
 
-namespace MosaicSC {
+namespace mosaicsc {
 
 BaseC::
 BaseC( const szt ind,
@@ -250,4 +250,4 @@ real BaseC::k_4_4;
 real BaseC::syn;
 typename BaseC::ppmf BaseC::ph;
 
-}   // namespace MosaicSC
+}  // namespace mosaicsc

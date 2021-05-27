@@ -34,7 +34,7 @@
 
 #include "definitions.h"
 
-namespace MosaicSC {
+namespace mosaicsc {
 
 struct __attribute__((packed)) __attribute__((aligned(128)))
 Parameters {
@@ -87,6 +87,6 @@ private:
 
 };
 
-}  // namespace MosaicSC
+}  // namespace mosaicsc
 
 #endif // MOSAICSC_PARAMETERS_H
