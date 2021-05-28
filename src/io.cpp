@@ -37,6 +37,7 @@ namespace mosaicsc {
 
 class Potts;
 
+
 IO::
 IO( Potts* host ) noexcept
     : sps {host->sps}
@@ -80,22 +81,22 @@ print_lattice( const szt i1,
     std::cout << std::endl;
     for (szt i=0; i<L[0]; i++) {
         for (szt j=x0; j<x1; j++) {
-            auto cl = Utils::Common::ANSI_RESET;
+            auto cl = utils::common::ANSI_RESET;
             if(      C<1>::node_is_occupied(i, j, tp, di, L))
-                cl = Utils::Common::ANSI_BG_BLUE;
+                cl = utils::common::ANSI_BG_BLUE;
             else if (C<2>::node_is_occupied(i, j, tp, di, L))
-                cl = Utils::Common::ANSI_BG_YELLOW;
+                cl = utils::common::ANSI_BG_YELLOW;
             else if (C<3>::node_is_occupied(i, j, tp, di, L))
-                cl = Utils::Common::ANSI_BG_RED;
+                cl = utils::common::ANSI_BG_RED;
             else if (C<4>::node_is_occupied(i, j, tp, di, L))
-                cl = Utils::Common::ANSI_BG_GREEN;
-//            auto cb = Utils::Common::ANSI_BOLD_OFF;
+                cl = utils::common::ANSI_BG_GREEN;
+//            auto cb = utils::common::ANSI_BOLD_OFF;
             if ((i == i1 && j == j1) ||
                 (i == i2 && j == j2))
-                cl = Utils::Common::ANSI_BG_MAGENTA; //ANSI_BOLD_ON;
+                cl = utils::common::ANSI_BG_MAGENTA; //ANSI_BOLD_ON;
             std::cout  << cl << tp[i][j] << "  ";
         }
-        std::cout << Utils::Common::ANSI_RESET << std::endl;
+        std::cout << utils::common::ANSI_RESET << std::endl;
     }
     std::cout << std::endl;
 }
@@ -115,7 +116,7 @@ void IO::
 print_orient( const szt x0,
               const szt x1 ) const noexcept
 {
-    namespace cmn = Utils::Common;
+    namespace cmn = utils::common;
     std::cout << std::endl;
     for (szt i=0; i<L[0]; i++) {
         for (szt j=x0; j<x1; j++) {
@@ -149,7 +150,7 @@ print_gE_color( const szt i1,
                 const szt i2,
                 const szt j2 ) const noexcept
 {
-    namespace cmn = Utils::Common;
+    namespace cmn = utils::common;
     constexpr auto zeror = cmn::zero<real>;
     for (szt i=0; i<L[0]; i++) {
         for (szt j=0; j<L[1]; j++) {
@@ -198,7 +199,7 @@ void IO::
 print_mskSC(const szt x0,
             const szt x1) const noexcept
 {
-    namespace cmn = Utils::Common;
+    namespace cmn = utils::common;
     for (szt i=0; i<L[0]; i++) {
         for (szt j=x0; j<x1; j++) {
             auto s {""};
@@ -240,7 +241,7 @@ logline( std::ostream& ofs, const szt itt,
         << " eNew: " << e1new << " " << e2new
         << " dE " << dE;
     ofs << " cE "; for (const auto o : cE) ofs << o << " ";
-    ofs << "Etot " << Utils::Common::avg(cE) << std::endl;
+    ofs << "Etot " << utils::common::avg(cE) << std::endl;
     ofs << " nSC " << scs.size();
 
     A2<real[BaseC::NT]> mv = host->massvarSC();
@@ -310,7 +311,7 @@ write( const bool startnew,
     std::ofstream ofs {fname, startnew ? std::ios::binary | std::ios::trunc
                                        : std::ios::binary | std::ios::app};
     if (ofs.fail())
-        throw Utils::Common::Exceptions::Simple(
+        throw utils::common::exceptions::Simple(
             "Error in write: Cannot open file: "+fname, &msgr);
 
     if (startnew) {
@@ -340,7 +341,7 @@ write_lattice( const bool startnew,
                           : std::ios::binary | std::ios::app;
     std::ofstream ofs {fname, flags};
     if (ofs.fail())
-        throw Utils::Common::Exceptions::Simple(
+        throw utils::common::exceptions::Simple(
                 "Error in write_lattice: Cannot open file: "+fname, &msgr);
 
     if (startnew) {
@@ -364,14 +365,14 @@ readin_lattice()
     auto fname = sps.workingDir_out + "lat_last_" + runname;
     std::ifstream ifs {fname, std::ios::binary};
     if(ifs.fail())
-        throw Utils::Common::Exceptions::Simple(
+        throw utils::common::exceptions::Simple(
             "Error in read_lattice: Cannot open file: " + fname, &msgr);
 
     szt l0, l1;
     ifs.read(reinterpret_cast<char*>(&l0), sizeof(szt));
     ifs.read(reinterpret_cast<char*>(&l1), sizeof(szt));
     if (l0 != L[0] || l1 != L[1])
-        throw Utils::Common::Exceptions::Simple(
+        throw utils::common::exceptions::Simple(
             "Error in read_lattice: Lattice dimensions do not agree: "+fname, &msgr);
 
     ifs.read(reinterpret_cast<char*>(&itt), sizeof(szt));

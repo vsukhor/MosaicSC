@@ -37,7 +37,7 @@ C( const szt ind,
     : BaseC {ind, di, pos}
 {}
 
-A2<Utils::Common::szt> C<4>::
+A2<utils::common::szt> C<4>::
 initialize( const A2<szt>& ini,
             vec2szt& tp,
             vec2ort& di,
@@ -79,7 +79,7 @@ hamming_dist(
 
     for (const auto& o : phb)
         if (interacts(o))
-            return Utils::Common::INF<real>;
+            return utils::common::INF<real>;
 
     real h {};
     bool flag {};
@@ -88,7 +88,7 @@ hamming_dist(
             if (o.k == &k_1_4a)
                 flag = true;
             else if (o.k == &k_1_4b)
-                if (flag) return Utils::Common::INF<real>;
+                if (flag) return utils::common::INF<real>;
             h += *o.k;
     }
 

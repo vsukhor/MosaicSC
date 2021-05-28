@@ -36,7 +36,7 @@
 
 namespace mosaicsc {
 
-struct __attribute__((packed)) __attribute__((aligned(128)))
+struct  __attribute__((aligned(128)))
 Parameters {
 
     static constexpr ulong numBasicTypes {4};
@@ -63,7 +63,7 @@ Parameters {
 
     explicit Parameters(const std::string&);
 
-    void print(Utils::Common::Msgr&) const;
+    void print(utils::common::Msgr&) const;
 
 private:
 

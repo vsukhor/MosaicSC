@@ -50,9 +50,9 @@ namespace mosaicsc {
 #endif
 
 #if MOSAICSC_CUDA>0
-    using RandFactory = Utils::Random::Cuda<real>;
+    using RandFactory = utils::random::Cuda<real>;
 #else
-    using RandFactory = Utils::Random::Boost<real>;
+    using RandFactory = utils::random::Boost<real>;
 #endif
 
 template<typename T> using A2 = std::array<T,2>;
@@ -65,7 +65,7 @@ struct Ornt {
     static constexpr T up {1};
     static constexpr T no {0};
     static constexpr T dw {-1};
-    static constexpr T nd {Utils::Common::huge<T>};
+    static constexpr T nd {utils::common::huge<T>};
 
     // return the up side down orientation:
     static constexpr T usd( const T from )
@@ -77,14 +77,14 @@ struct Ornt {
 };
 
 // Aliaces to utility library names.
-using Msgr = Utils::Common::Msgr;
-using szt = Utils::Common::szt;
-using uint = Utils::Common::uint;
-using ulong = Utils::Common::ulong;
-using vec2real = Utils::Common::vec2<real>;
-using vec2szt = Utils::Common::vec2<szt>;
-using vec2uint = Utils::Common::vec2<uint>;
-using vec2ort = Utils::Common::vec2<Ornt::T>;
+using Msgr = utils::common::Msgr;
+using szt = utils::common::szt;
+using uint = utils::common::uint;
+using ulong = utils::common::ulong;
+using vec2real = utils::common::vec2<real>;
+using vec2szt = utils::common::vec2<szt>;
+using vec2uint = utils::common::vec2<uint>;
+using vec2ort = utils::common::vec2<Ornt::T>;
 
 template<uint> class C {};
 

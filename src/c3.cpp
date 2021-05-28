@@ -37,7 +37,7 @@ C( const szt ind,
     : BaseC {ind, di, pos}
 {}
 
-Utils::Common::szt C<3>::
+utils::common::szt C<3>::
 initialize( const szt posini,
             vec2szt& tp,
             vec2ort& di ) noexcept
@@ -66,7 +66,7 @@ hamming_dist(
 
     for (const auto& o : phb)
         if (interacts(o))
-            return Utils::Common::INF<real>;
+            return utils::common::INF<real>;
 
     real h {};
     for (const auto& o : itr)

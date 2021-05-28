@@ -37,7 +37,7 @@
 namespace mosaicsc {
 
 struct
-__attribute__((packed)) __attribute__((aligned(64)))
+__attribute__((aligned(64)))
 Occupancy {
 
     const Ornt::T so;      // orientation of the 1st component
@@ -116,8 +116,8 @@ BaseC {
         szt,
         szt,
         const long[2],
-        const Utils::Common::vec2<szt>&,
-        const Utils::Common::vec2<Ornt::T>&,
+        const utils::common::vec2<szt>&,
+        const utils::common::vec2<Ornt::T>&,
         const szt[]
     ) noexcept;
 
@@ -137,7 +137,7 @@ BaseC {
     ) noexcept;
 
     virtual void set_conn(
-        const Utils::Common::vec2<szt>& tp,
+        const utils::common::vec2<szt>& tp,
         const szt L[]
     ) noexcept = 0;
                 

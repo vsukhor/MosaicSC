@@ -71,7 +71,7 @@ Potts( const Parameters& sps,
                                     L[1] - sps.Ntot[2],                  // C3
                                     2*L[1] - sps.Ntot[3] };              // C4
 
-        namespace Vec2 = Utils::Common::Vec2;
+        namespace Vec2 = utils::common::Vec2;
         for (szt i = 1; i<BaseC::NT; i++) {
             ocPos[i] = Vec2::make<uint>(sps.Ntot[i-1], 2, 0);
             emPos[i] = Vec2::make<uint>(nemp_T[i-1], 2, 0);
@@ -161,12 +161,12 @@ run() noexcept
         // Calculate the new energies and decide based on the energy difference
         // between the old and new configurations:
         if (const auto e1new = hamming_dist(t1new, d1new, i1, j1);
-            e1new < Utils::Common::INF<real>) {
+            e1new < utils::common::INF<real>) {
             if (const auto e2new = hamming_dist(t2new, d2new, i2, j2);
-                e2new < Utils::Common::INF<real>) {
+                e2new < utils::common::INF<real>) {
                 // Metropolis condition on energy difference:
                 if (const auto dE = e1new + e2new - e1old - e2old;
-                    dE < Utils::Common::zero<real> ||
+                    dE < utils::common::zero<real> ||
                     rf->r01u() < std::exp(-sps.beta * dE)) {
                     // the move is accepted: increment
                     if (it % sps.logfreq == 0)
@@ -240,7 +240,7 @@ hamming_dist( const szt t,
               const szt i,
               const szt j ) const noexcept
 {
-    namespace Cmn = Utils::Common;
+    namespace Cmn = utils::common;
     XASSERT(t<=Parameters::numBasicTypes, "Type not found for t = " + Cmn::STR(t));
     if (t == 0) return Cmn::zero<real>;
     if (t == 4) return C<4>::hamming_dist(i, j, d, tp, di, L);
@@ -265,9 +265,9 @@ massvarSC() noexcept
     A2<real[BaseC::NT]> v;
     for (szt i=0; i<BaseC::NT; i++) {
         // 0: mean of SC sizes; 1-4: mean of # of corresponding monomers per SC
-        v[0][i] = Utils::Common::avg(s[i]);
+        v[0][i] = utils::common::avg(s[i]);
         // var of the same
-        v[1][i] = Utils::Common::var(s[i]);
+        v[1][i] = utils::common::var(s[i]);
     }
     return v;
 }
@@ -286,16 +286,16 @@ void Potts::
 eTot() noexcept
 {
     set_gE();
-    std::fill(cE.begin(), cE.end(), Utils::Common::zero<real>);
+    std::fill(cE.begin(), cE.end(), utils::common::zero<real>);
     for (szt i=0; i<L[0]; i++)
         for (szt j=0; j<L[1]; j++)
-            cE[tp[i][j]] += gE[i][j] / Utils::Common::two<real>;
+            cE[tp[i][j]] += gE[i][j] / utils::common::two<real>;
 }
 
 void Potts::
 set_gE() noexcept
 {
-    Utils::Common::Vec2::fill<real>(gE, Utils::Common::zero<real>);
+    utils::common::Vec2::fill<real>(gE, utils::common::zero<real>);
     for (szt i=0; i<L[0]; i++)
         for (szt j=0; j<L[1]; j++)
             gE[i][j] = hamming_dist(tp[i][j], di[i][j], i, j);
@@ -304,7 +304,7 @@ void Potts::
 setSCs() noexcept
 {
     scs.clear();
-    Utils::Common::Vec2::fill<szt>(mskSC, Utils::Common::zero<szt>);
+    utils::common::Vec2::fill<szt>(mskSC, utils::common::zero<szt>);
     for (szt i=0; i<L[0]; i++)
         for (szt j=0; j<L[1]; j++)
             if (!mskSC[i][j] && tp[i][j]) {
@@ -374,7 +374,7 @@ set_connectivity() noexcept
         }
         // Mean fraction of all slots a complex of type k posesses
         // that are occupied:
-        conCT[k] = (n > 0) ? Utils::Common::avg(conNbT[k]) : 0;
+        conCT[k] = (n > 0) ? utils::common::avg(conNbT[k]) : 0;
     }
 }
 

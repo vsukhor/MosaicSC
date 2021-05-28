@@ -17,7 +17,7 @@ The software package here incorporates details of the RC interactions to reconst
 
 The code requires a C++17 - capable compiler (e.g, it was tested with gcc 7.3.0 or clang 10.0.0 on macOS). 
 
-For generation of pseudo-random numbers, [Utils::Random](https://github.com/vsukhor/utils/tree/master/utils/random) 
+For generation of pseudo-random numbers, [utils::random](https://github.com/vsukhor/utils/tree/master/utils/random) 
 relies on either [boost](https://www.boost.org/) or [NVIDIA cuRAND](https://developer.nvidia.com/curand), imported from a [library in a separate repository](https://github.com/vsukhor/utils/), so
 depending on the underlying generator chosen, one of these should be accessible (in the case of the boost, the headers suffice).  
 Most convenient, the executable can be built using GNU make system  based on the examplary [makefile](manual_make/Makefile)). 
@@ -29,7 +29,7 @@ Use of the makefiles for both library and the main application is straightforwar
 The simulation parameters are read from a short configuration file, structured 
 as in the example [config.txt](examples/example1/config.txt). 
 More details on the config file formatting can be found in the 
-Utils::Config [documentation](https://github.com/vsukhor/utils/blob/master/utils/config/conf_file_structure.md) 
+utils::config [documentation](https://github.com/vsukhor/utils/blob/master/utils/config/conf_file_structure.md) 
 The file is expected to be named as 'config.txt'.
 Using the above example, and the executable 'MosaicSC_CPU', the simulation may be launched as
 

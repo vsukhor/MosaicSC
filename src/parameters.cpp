@@ -84,7 +84,7 @@ load_config( const std::string& fname )
 void Parameters::
 print( Msgr& msgr ) const
 {
-    using Utils::Common::STR;
+    using utils::common::STR;
     msgr.print("Parameters: ");
     msgr.print("workingDir_in: " + workingDir_in);
     msgr.print("workingDir_out: " + workingDir_out);
