@@ -42,7 +42,7 @@ depending on the underlying generator chosen, one of these should be accessible 
 
 ##### Alternative ways for building the code
 
-1. On systems having [cmake](https://cmake.org) (ver. 3.15 or higher) installed, the build can 
+1. On systems having [cmake](https://cmake.org) (ver. 3.17 or higher) installed, the build can 
     be performed e.g. as follows:  
     `cd mitosim`  
     `mkdir build`  
