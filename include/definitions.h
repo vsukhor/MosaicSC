@@ -67,7 +67,7 @@ struct Ornt {
     static constexpr T dw {-1};
     static constexpr T nd {utils::common::huge<T>};
 
-    // return the up side down orientation:
+    // Return the up side down orientation:
     static constexpr T usd( const T from )
     {
         return (from == up)
@@ -86,6 +86,8 @@ using vec2szt = utils::common::vec2<szt>;
 using vec2uint = utils::common::vec2<uint>;
 using vec2ort = utils::common::vec2<Ornt::T>;
 
+// Template to be futrther customized in component type-specific
+// template specializations.
 template<uint> class C {};
 
 } // namespace mosaicsc
