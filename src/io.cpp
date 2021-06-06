@@ -24,6 +24,7 @@
 ================================================================================
 */
 
+#include <filesystem>
 #include <fstream>
 #include <iostream>
 
@@ -305,14 +306,14 @@ write( const bool startnew,
        const bool last,
        const szt itt ) const
 {
-
-    std::string fname {last ? sps.workingDir_out+"scs_last_"+runname
-                            : sps.workingDir_out+"scs_"+runname};
-    std::ofstream ofs {fname, startnew ? std::ios::binary | std::ios::trunc
+    auto file {last
+        ? sps.workingDir_out / (std::string("scs_last_")+runname)
+        : sps.workingDir_out / (std::string("scs_")+runname)};
+    std::ofstream ofs {file, startnew ? std::ios::binary | std::ios::trunc
                                        : std::ios::binary | std::ios::app};
     if (ofs.fail())
         throw utils::common::exceptions::Simple(
-            "Error in write: Cannot open file: "+fname, &msgr);
+            "Error in write: Cannot open file: "+file.string(), &msgr);
 
     if (startnew) {
         ofs.write(reinterpret_cast<const char*>(&L[0]), sizeof(szt));
@@ -335,14 +336,15 @@ write_lattice( const bool startnew,
                const bool last,
                const szt itt ) const
 {
-    auto fname = last ? sps.workingDir_out+"lat_last_"+runname
-                      : sps.workingDir_out+"lat_"+runname;
+    auto file = last
+        ? sps.workingDir_out / (std::string("lat_last_")+runname)
+        : sps.workingDir_out / (std::string("lat_")+runname);
     auto flags = startnew ? std::ios::binary | std::ios::trunc
                           : std::ios::binary | std::ios::app;
-    std::ofstream ofs {fname, flags};
+    std::ofstream ofs {file, flags};
     if (ofs.fail())
         throw utils::common::exceptions::Simple(
-                "Error in write_lattice: Cannot open file: "+fname, &msgr);
+                "Error in write_lattice: Cannot open file: "+file.string(), &msgr);
 
     if (startnew) {
         ofs.write(reinterpret_cast<const char*>(&L[0]), sizeof(szt));
@@ -362,18 +364,19 @@ szt IO::
 readin_lattice()
 {
     szt itt;
-    auto fname = sps.workingDir_out + "lat_last_" + runname;
-    std::ifstream ifs {fname, std::ios::binary};
+    auto file = sps.workingDir_out / (std::string("lat_last_") + runname);
+    std::ifstream ifs {file, std::ios::binary};
     if(ifs.fail())
         throw utils::common::exceptions::Simple(
-            "Error in read_lattice: Cannot open file: " + fname, &msgr);
+            "Error in read_lattice: Cannot open file: " + file.string(), &msgr);
 
     szt l0, l1;
     ifs.read(reinterpret_cast<char*>(&l0), sizeof(szt));
     ifs.read(reinterpret_cast<char*>(&l1), sizeof(szt));
     if (l0 != L[0] || l1 != L[1])
         throw utils::common::exceptions::Simple(
-            "Error in read_lattice: Lattice dimensions do not agree: "+fname, &msgr);
+            "Error in read_lattice: Lattice dimensions do not agree: "+
+            file.string(), &msgr);
 
     ifs.read(reinterpret_cast<char*>(&itt), sizeof(szt));
     for (szt i=0; i<L[0]; i++)

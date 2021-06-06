@@ -24,6 +24,7 @@
 ================================================================================
 */
 
+#include <filesystem>
 #include <iostream>
 #include <mutex>
 #include <string>
@@ -46,28 +47,29 @@ int main( int argc, const char* argv[] )
         return utils::common::exceptions::simple(
                 "Error: The path to config file is missing.", nullptr);
 
-    auto workingDir = std::string(argv[1]) + utils::common::SLASH;
+    auto workingDir = std::filesystem::path {std::string(argv[1])};
 
-    auto configFname = workingDir + "config.txt";
-    if (!utils::common::file_exists(configFname))
+    auto configFile = std::filesystem::directory_entry{ workingDir / "config.txt"};
+    if (!configFile.is_regular_file())
         return utils::common::exceptions::simple(
-        "Config file not accessible in with path " + configFname, nullptr);
+        "Config file not accessible in with path " + configFile.path().string(), nullptr);
 
-    mosaicsc::Parameters sps {configFname};
+    mosaicsc::Parameters sps {configFile};
 
     sps.workingDir_in = workingDir;
-    if (!utils::common::directory_exists(sps.workingDir_in))
+    if (!std::filesystem::exists(sps.workingDir_in))
         return utils::common::exceptions::simple(
                     "No directory for input files is available", nullptr);
 
     sps.workingDir_out = workingDir;
-    if (!utils::common::directory_exists(sps.workingDir_out))
+    if (!std::filesystem::exists(sps.workingDir_out))
         return utils::common::exceptions::simple(
                     "No directory for output files is available", nullptr);
 
-    auto seedfilename = workingDir+"seeds";
-    if (!utils::common::file_exists(seedfilename))
-        mosaicsc::RandFactory::make_seed(seedfilename, nullptr);
+    const auto seeds = std::filesystem::directory_entry {workingDir / "seeds"};
+    const std::string seedfn {seeds.path().string()};
+    if (!seeds.is_regular_file())
+        mosaicsc::RandFactory::make_seed(seeds, nullptr);
 
     mosaicsc::BaseC::set_statics(&sps);
 
@@ -75,7 +77,7 @@ int main( int argc, const char* argv[] )
 
     const auto ntasks = sps.RUN_end - (sps.RUN_ini - 1);
 
-    if ((MOSAICSC_CUDA && ntasks > 1))
+    if (MOSAICSC_CUDA && ntasks > 1)
         return utils::common::exceptions::simple(
             std::string("Using CUDA is only compatible with ") +
             "single-threaded execution.\nPlease set nthreads = 1", nullptr);
@@ -91,7 +93,7 @@ int main( int argc, const char* argv[] )
                                               th.i2[ith],
                                               ith,
                                               std::ref(mtx),
-                                              std::cref(seedfilename),
+                                              std::cref(seedfn),
                                               std::cref(sps) );
     th.join();
 
@@ -110,22 +112,23 @@ void runThread( const utils::common::szt ii1,
         mtx.lock();
 
             const auto runname = std::to_string(ii);
-            const auto logfname = sps.workingDir_out + "log_" + runname + ".txt";
-            std::ofstream logfile;
+            const auto logf = sps.workingDir_out /
+                (std::string("log_") + runname + ".txt");
+            std::ofstream log;
             try {
-                if (sps.resume) logfile.open(logfname, std::ios::app);
-                else            logfile.open(logfname, std::ios::trunc);
+                if (sps.resume) log.open(logf, std::ios::app);
+                else            log.open(logf, std::ios::trunc);
             } catch (const std::ifstream::failure&) {
                 utils::common::exceptions::simple(
-                    "Cannot open file: " + logfname, nullptr);
+                    "Cannot open file: " + logf.string(), nullptr);
             }
             std::cout.precision(6);
             std::cout.setf(std::ios::scientific);
-            logfile.precision(6);
-            logfile.setf(std::ios::scientific);
+            log.precision(6);
+            log.setf(std::ios::scientific);
 
             constexpr const int PRINT_PRECISION = 6;
-            utils::common::Msgr msgr {&std::cout, &logfile, PRINT_PRECISION};
+            utils::common::Msgr msgr {&std::cout, &log, PRINT_PRECISION};
             sps.print(msgr);
             
             utils::common::StopWatch stopwatch;
@@ -138,7 +141,7 @@ void runThread( const utils::common::szt ii1,
                        " on " + std::string(hostname));
 
             auto R = std::make_unique<mosaicsc::RandFactory>(
-                                                    seedfilename, ii, msgr);
+                    std::filesystem::directory_entry {seedfilename}, ii, msgr);
 
         mtx.unlock();
 
@@ -147,7 +150,7 @@ void runThread( const utils::common::szt ii1,
 
         mtx.lock();
 
-            logfile << std::endl;
+            log << std::endl;
             std::cout << std::endl;
             stopwatch.stop();
             const std::string message {"Run " + runname +
@@ -155,7 +158,7 @@ void runThread( const utils::common::szt ii1,
                                        "on " + std::string(hostname)};
             msgr.print(message);
             msgr.print("Wall time used; " + stopwatch.duration() + " sec");
-            logfile << std::endl;
+            log << std::endl;
             std::cout << std::endl;
 
         mtx.unlock();

@@ -24,6 +24,7 @@
 ================================================================================
 */
 
+#include <filesystem>
 #include <iostream>
 #include <sstream>
 #include <string>
@@ -37,18 +38,18 @@
 namespace mosaicsc {
 
 Parameters::
-Parameters( const std::string& configFname )
+Parameters( const dir_entry& configFile )
 {
-    load_config(configFname);
+    load_config(configFile);
 }
 
 void Parameters::
-load_config( const std::string& fname )
+load_config( const dir_entry& file )
 {
     std::string parname, value;
-    std::ifstream config {fname};
+    std::ifstream config {file};
     if (!config.is_open()) {
-        std::cout << "Cannot open file: " + fname;
+        std::cout << "Cannot open file: " + file.path().string();
         exit(0);
     }
 
@@ -86,8 +87,8 @@ print( Msgr& msgr ) const
 {
     using utils::common::STR;
     msgr.print("Parameters: ");
-    msgr.print("workingDir_in: " + workingDir_in);
-    msgr.print("workingDir_out: " + workingDir_out);
+    msgr.print("workingDir_in: " + workingDir_in.string());
+    msgr.print("workingDir_out: " + workingDir_out.string());
     msgr.print<true>("RUN_ini = " + STR(RUN_ini));
     msgr.print<true>("RUN_end = " + STR(RUN_end));
     msgr.print<true>("nthreads = " + STR(nthreads));

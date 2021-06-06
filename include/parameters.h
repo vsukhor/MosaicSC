@@ -27,6 +27,7 @@
 #ifndef MOSAICSC_PARAMETERS_H
 #define MOSAICSC_PARAMETERS_H
 
+#include <filesystem>
 #include <iostream>
 #include <sstream>
 #include <string>
@@ -39,10 +40,13 @@ namespace mosaicsc {
 struct  __attribute__((aligned(128)))
 Parameters {
 
+    using dir_entry = std::filesystem::directory_entry;
+    using path = std::filesystem::path;
+
     static constexpr ulong numBasicTypes {4};
 
-    std::string workingDir_in;
-    std::string workingDir_out;
+    path workingDir_in;
+    path workingDir_out;
 
     szt RUN_ini;
     szt RUN_end;
@@ -61,13 +65,13 @@ Parameters {
     real               syn;
     real               beta;
 
-    explicit Parameters(const std::string&);
+    explicit Parameters(const dir_entry& configFile);
 
-    void print(utils::common::Msgr&) const;
+    void print(utils::common::Msgr& msgr) const;
 
 private:
 
-    void load_config(const std::string&);
+    void load_config(const dir_entry& file);
 
     template <typename K>
     void initialize_arrayparam(

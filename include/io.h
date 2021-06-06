@@ -27,8 +27,9 @@
 #ifndef MOSAICSC_IO_H
 #define MOSAICSC_IO_H
 
-#include <iostream>
+#include <filesystem>
 #include <fstream>
+#include <iostream>
 #include <mutex>
 
 #include "utils/common/misc.h"
