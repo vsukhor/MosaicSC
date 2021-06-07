@@ -1,9 +1,14 @@
-cmake_minimum_required(VERSION 3.15)
+cmake_minimum_required(VERSION 3.17)
 
 project(MosaicSC
     VERSION 0.7.1
     DESCRIPTION "Simulation of space-embedded molecular aggregates"
     LANGUAGES CXX)
+
+option(USE_GPU "Enables use of GPU via CUDA." False) # use CPU by default
+if(USE_GPU)
+    enable_language(CUDA)
+endif()
 
 if(CMAKE_PROJECT_NAME STREQUAL PROJECT_NAME)
 
