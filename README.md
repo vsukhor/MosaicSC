@@ -32,7 +32,7 @@ composition of the SC aggrregations arising at particular values of species conc
 
 #### Installation
 
-The code requires a C++17 - capable compiler (e.g, it was tested with gcc 7.3.0 or clang 10.0.0 on macOS). 
+The code requires a C++20 - capable compiler. It was tested on macOS (clang-12) and Ubuntu (gcc-11). 
 
 For generation of pseudo-random numbers, [utils::random](https://github.com/vsukhor/utils/tree/master/utils/random) 
 relies on either [boost](https://www.boost.org/) or [NVIDIA cuRAND](https://developer.nvidia.com/curand), 
@@ -75,3 +75,7 @@ detailed log file reporting evolution of the key metrics parameters.
 basic visualization and analysis of the logged data.
 The scripts can be used independently of the main C++ code,  provided the output files are 
 available (see the [instructions](scripts/README.md) inside). 
+
+### License
+
+**MosaicSC** is available under the terms of the [MIT license](LICENSE.md).
