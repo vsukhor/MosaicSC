@@ -25,6 +25,7 @@
 */
 
 #include <filesystem>
+#include <functional>
 #include <iostream>
 #include <mutex>
 #include <string>
