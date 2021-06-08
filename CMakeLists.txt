@@ -5,7 +5,7 @@ project(MosaicSC
     DESCRIPTION "Simulation of space-embedded molecular aggregates"
     LANGUAGES CXX)
 
-option(USE_GPU "Enables use of GPU via CUDA." False) # use CPU by default
+option(USE_GPU "Enables use of GPU via CUDA." OFF) # use CPU by default
 if(USE_GPU)
     enable_language(CUDA)
 endif()
@@ -14,7 +14,7 @@ if(CMAKE_PROJECT_NAME STREQUAL PROJECT_NAME)
 
     # Let's ensure -std=c++xx instead of -std=g++xx
     set(CMAKE_CXX_EXTENSIONS OFF)
-    set(CMAKE_VERBOSE_MAKEFILE ON)
+    set(CMAKE_VERBOSE_MAKEFILE OFF)
 
     # Let's nicely support folders in IDE's
     set_property(GLOBAL PROPERTY USE_FOLDERS ON)
