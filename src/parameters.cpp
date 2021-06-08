@@ -38,18 +38,18 @@
 namespace mosaicsc {
 
 Parameters::
-Parameters( const dir_entry& configFile )
+Parameters( const path& configFile )
 {
     load_config(configFile);
 }
 
 void Parameters::
-load_config( const dir_entry& file )
+load_config( const path& file )
 {
     std::string parname, value;
     std::ifstream config {file};
     if (!config.is_open()) {
-        std::cout << "Cannot open file: " + file.path().string();
+        std::cout << "Cannot open file: " + file.string();
         exit(0);
     }
 

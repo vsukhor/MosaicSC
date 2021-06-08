@@ -40,7 +40,6 @@ namespace mosaicsc {
 struct  __attribute__((aligned(128)))
 Parameters {
 
-    using dir_entry = std::filesystem::directory_entry;
     using path = std::filesystem::path;
 
     static constexpr ulong numBasicTypes {4};
@@ -65,13 +64,13 @@ Parameters {
     real               syn;
     real               beta;
 
-    explicit Parameters(const dir_entry& configFile);
+    explicit Parameters(const path& configFile);
 
     void print(utils::common::Msgr& msgr) const;
 
 private:
 
-    void load_config(const dir_entry& file);
+    void load_config(const path& file);
 
     template <typename K>
     void initialize_arrayparam(

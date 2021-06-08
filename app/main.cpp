@@ -47,12 +47,12 @@ int main( int argc, const char* argv[] )
         return utils::common::exceptions::simple(
                 "Error: The path to config file is missing.", nullptr);
 
-    auto workingDir = std::filesystem::path {std::string(argv[1])};
+    std::filesystem::path workingDir {std::string(argv[1])};
 
-    auto configFile = std::filesystem::directory_entry{ workingDir / "config.txt"};
-    if (!configFile.is_regular_file())
+    auto configFile { workingDir / "config.txt"};
+    if (!std::filesystem::is_regular_file(configFile))
         return utils::common::exceptions::simple(
-        "Config file not accessible in with path " + configFile.path().string(), nullptr);
+        "Config file not accessible in with path " + configFile.string(), nullptr);
 
     mosaicsc::Parameters sps {configFile};
 
@@ -66,9 +66,9 @@ int main( int argc, const char* argv[] )
         return utils::common::exceptions::simple(
                     "No directory for output files is available", nullptr);
 
-    const auto seeds = std::filesystem::directory_entry {workingDir / "seeds"};
-    const std::string seedfn {seeds.path().string()};
-    if (!seeds.is_regular_file())
+    const auto seeds {workingDir / "seeds"};
+    const std::string seedfn {seeds.string()};
+    if (!std::filesystem::exists(seeds))
         mosaicsc::RandFactory::make_seed(seeds, nullptr);
 
     mosaicsc::BaseC::set_statics(&sps);
@@ -141,7 +141,7 @@ void runThread( const utils::common::szt ii1,
                        " on " + std::string(hostname));
 
             auto R = std::make_unique<mosaicsc::RandFactory>(
-                    std::filesystem::directory_entry {seedfilename}, ii, msgr);
+                    std::filesystem::path{seedfilename}, ii, msgr);
 
         mtx.unlock();
 
