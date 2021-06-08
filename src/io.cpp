@@ -36,7 +36,7 @@
 
 namespace mosaicsc {
 
-class Potts;
+struct Potts;
 
 
 IO::

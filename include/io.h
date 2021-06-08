@@ -46,11 +46,11 @@
 
 namespace mosaicsc {
 
-class Potts;
+struct Potts;
 
 class IO {
 
-    friend class Potts;
+    friend struct Potts;
 
     IO(Potts* host) noexcept;  // The only constructor
 
