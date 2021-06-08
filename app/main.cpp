@@ -28,6 +28,7 @@
 #include <iostream>
 #include <mutex>
 #include <string>
+#include <thread>
 
 #include "definitions.h"
 #include "parameters.h"
