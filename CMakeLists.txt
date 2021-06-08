@@ -10,6 +10,10 @@ if(USE_GPU)
     enable_language(CUDA)
 endif()
 
+set(CMAKE_CXX_STANDARD 20)
+set(CMAKE_CXX_STANDARD_REQUIRED ON)
+add_compile_options(-O3 -msse4)
+
 if(CMAKE_PROJECT_NAME STREQUAL PROJECT_NAME)
 
     # Let's ensure -std=c++xx instead of -std=g++xx
@@ -21,12 +25,11 @@ if(CMAKE_PROJECT_NAME STREQUAL PROJECT_NAME)
 
 endif()
 
-add_compile_options(-O3 -msse4)
-
-# FetchContent downloads during the configure step
-# include(FetchContent)
-
+find_package(Threads REQUIRED)
 find_package(Boost REQUIRED)
+if(Boost_FOUND)
+  include_directories(${Boost_INCLUDE_DIRS})
+endif()
 
 add_subdirectory(external)
 
