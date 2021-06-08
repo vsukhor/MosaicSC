@@ -10,8 +10,7 @@ add_library(MosaicSC_lib STATIC
 
 target_compile_features(MosaicSC_lib PRIVATE cxx_std_20)
 
-target_include_directories(MosaicSC_lib PUBLIC
+include_directories(MosaicSC_lib PUBLIC
                     ../include
-                    ../external
-                    /usr/local/include)
+                    ../external)
 
