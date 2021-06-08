@@ -8,8 +8,6 @@ add_library(MosaicSC_lib STATIC
             parameters.cpp
             potts.cpp)
 
-target_compile_features(MosaicSC_lib PRIVATE cxx_std_20)
-
 include_directories(MosaicSC_lib PUBLIC
                     ../include
                     ../external)
