@@ -46,11 +46,12 @@ Parameters( const path& configFile )
 void Parameters::
 load_config( const path& file )
 {
-    std::string parname, value;
+    std::string parname;
+    std::string value;
     std::ifstream config {file};
     if (!config.is_open()) {
-        std::cout << "Cannot open file: " + file.string();
-        exit(0);
+        std::cerr << "Cannot open file: " << file.string();
+        std::exit(EXIT_FAILURE);
     }
 
     config.clear();
@@ -76,8 +77,8 @@ load_config( const path& file )
         else if (parname == "syn")            std::stringstream(value) >> syn;
         else if (parname == "beta")           std::stringstream(value) >> beta;
         else if (parname != "") {
-            std::cout << "Error in config file: unknown parameter name: " + parname;
-            exit(0);
+            std::cerr << "Error in config file: unknown parameter name: " << parname;
+            std::exit(EXIT_FAILURE);
         }
     }
 }
@@ -87,23 +88,23 @@ print( Msgr& msgr ) const
 {
     using utils::common::STR;
     msgr.print("Parameters: ");
-    msgr.print("workingDir_in: " + workingDir_in.string());
-    msgr.print("workingDir_out: " + workingDir_out.string());
-    msgr.print<true>("RUN_ini = " + STR(RUN_ini));
-    msgr.print<true>("RUN_end = " + STR(RUN_end));
-    msgr.print<true>("nthreads = " + STR(nthreads));
-    msgr.print<true>("resume = " + STR(int(resume)));
-    msgr.print<true>("Niter = " + STR(Niter));
-    msgr.print<true>("logfreq = " + STR(logfreq));
-    msgr.print<true>("detailedfreq = " + STR(detailedfreq));
-    msgr.print<true>("finaldetailed = " + STR(int(finaldetailed)));
-    msgr.print<true>("savefreq = " + STR(savefreq));
+    msgr.print("workingDir_in: ", workingDir_in.string());
+    msgr.print("workingDir_out: ", workingDir_out.string());
+    msgr.print<true>("RUN_ini = ", RUN_ini);
+    msgr.print<true>("RUN_end = ", RUN_end);
+    msgr.print<true>("nthreads = ", nthreads);
+    msgr.print<true>("resume = ", int(resume));
+    msgr.print<true>("Niter = ", Niter);
+    msgr.print<true>("logfreq = ", logfreq);
+    msgr.print<true>("detailedfreq = ", detailedfreq);
+    msgr.print<true>("finaldetailed = ", int(finaldetailed));
+    msgr.print<true>("savefreq = ", savefreq);
     msgr.print_vector("Ntot ", Ntot); msgr.print<true>("");
-    msgr.print<true>("dilution = " + STR(dilution));
-    msgr.print<true>("inum = " + STR(inum));
+    msgr.print<true>("dilution = ", dilution);
+    msgr.print<true>("inum = ", inum);
     msgr.print_vector("rates_f ", rates_f); msgr.print<true>("");
-    msgr.print<true>("syn = " + STR(syn));
-    msgr.print<true>("beta = " + STR(beta));
+    msgr.print<true>("syn = ", syn);
+    msgr.print<true>("beta = ", beta);
 }
 
 template<typename K>
@@ -114,10 +115,10 @@ initialize_arrayparam( const szt len,
                        std::vector<K>& par )
 {
     if (len < 1) {
-        std::cout << "Error in config file: " + parname
+        std::cerr << "Error in config file: " + parname
                   << " should be initialized before"
                   << std::endl;
-        exit(0);
+        std::exit(EXIT_FAILURE);
     }
     par.resize(len);
     const std::string emp {" "}, tab {"\t"};
@@ -127,15 +128,15 @@ initialize_arrayparam( const szt len,
         if (e == std::string::npos) e = value.length();
         const std::string val {value.substr(0, e)};
         if (val.length() < 1) {
-            std::cout << "Error in config file: Number of elelments in "
+            std::cerr << "Error in config file: Number of elelments in "
                       << parname << " is smaller than " << len
                       << std::endl;
-            exit(0);
+            std::exit(EXIT_FAILURE);
         }
         std::stringstream(val) >> par[j];
         value.erase( 0, e );
-        while( !value.substr(0, 1).compare(emp) ||
-               !value.substr(0, 1).compare(tab) )
+        while (!value.substr(0, 1).compare(emp) ||
+               !value.substr(0, 1).compare(tab))
             value.erase(value.begin());
     }
 }

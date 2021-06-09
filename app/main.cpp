@@ -129,18 +129,18 @@ void runThread( const utils::common::szt ii1,
             log.precision(6);
             log.setf(std::ios::scientific);
 
-            constexpr const int PRINT_PRECISION = 6;
-            utils::common::Msgr msgr {&std::cout, &log, PRINT_PRECISION};
+            constexpr int print_accuracy {6};
+            utils::common::Msgr msgr {&std::cout, &log, print_accuracy};
             sps.print(msgr);
             
             utils::common::StopWatch stopwatch;
             stopwatch.start();
 
-            char hostname[1024];
-            gethostname(hostname, 1024);
-            msgr.print("Run " + runname +
-                       " started: " + stopwatch.start.str +
-                       " on " + std::string(hostname));
+            constexpr int buffersize {1024};
+            char hostname[buffersize];
+            gethostname(hostname, buffersize);
+            msgr.print("Run ", runname, " started: ", stopwatch.start.str,
+                       " on ", hostname);
 
             auto R = std::make_unique<mosaicsc::RandFactory>(
                     std::filesystem::path{seedfilename}, ii, msgr);
@@ -155,11 +155,9 @@ void runThread( const utils::common::szt ii1,
             log << std::endl;
             std::cout << std::endl;
             stopwatch.stop();
-            const std::string message {"Run " + runname +
-                                       " finished: " + stopwatch.stop.str  +
-                                       "on " + std::string(hostname)};
-            msgr.print(message);
-            msgr.print("Wall time used; " + stopwatch.duration() + " sec");
+            msgr.print("Run ", runname, " finished: ", stopwatch.stop.str,
+                       "on ", hostname);
+            msgr.print("Wall time used; ", stopwatch.duration(), " sec");
             log << std::endl;
             std::cout << std::endl;
 

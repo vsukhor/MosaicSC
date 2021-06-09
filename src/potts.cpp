@@ -56,9 +56,8 @@ Potts( const Parameters& sps,
         // Lattice dimensions:
         L[0] = numRows;
         L[1] = static_cast<szt>(sps.dilution * maxn);
-        msgr.print("Lattice dimensions " +
-                    std::to_string(L[0]) + " " + std::to_string(L[1]));
-        V = L[0]*L[1];
+        msgr.print("Lattice dimensions ", L[0], " ", L[1]);
+        V = L[0] * L[1];
         
         cE = std::vector<real>(L[0]);        // energies per lattice row
         
@@ -241,7 +240,8 @@ hamming_dist( const szt t,
               const szt j ) const noexcept
 {
     namespace Cmn = utils::common;
-    XASSERT(t<=Parameters::numBasicTypes, "Type not found for t = " + Cmn::STR(t));
+    XASSERT(t<=Parameters::numBasicTypes,
+            "Type not found for t = " + Cmn::STR(t));
     if (t == 0) return Cmn::zero<real>;
     if (t == 4) return C<4>::hamming_dist(i, j, d, tp, di, L);
     if (t == 2) return C<2>::hamming_dist(i, j, d, tp, di, L);
