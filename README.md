@@ -1,5 +1,8 @@
 #  MosaicSC 
 
+![build](https://github.com/vsukhor/MosaicSC/actions/workflows/cmake.yml/badge.svg)
+[![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](./LICENSE.md)
+
 ### Simulation of space-embedded molecular aggregates using Potts model
 
 #### Introduction
