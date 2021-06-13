@@ -5,11 +5,6 @@ project(MosaicSC
     DESCRIPTION "Simulation of space-embedded molecular aggregates"
     LANGUAGES CXX)
 
-option(USE_GPU "Enables use of GPU via CUDA." OFF) # use CPU by default
-if(USE_GPU)
-    enable_language(CUDA)
-endif()
-
 set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 add_compile_options(-O3 -msse4)

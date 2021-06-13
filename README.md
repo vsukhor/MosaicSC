@@ -35,28 +35,34 @@ composition of the SC aggrregations arising at particular values of species conc
 
 #### Installation
 
+The simulator makes use of the general-purpose library [utils](https://github.com/vsukhor/utils),
+(included here as a git submodule).
+So, when cloning, please make sure, that the dependent library is included, e.g., by applying:
+
+```console
+git clone --recursive https://github.com/vsukhor/mosaicsc.git
+```
+
+and, in the case of an update, do this explicitly on the submodule:
+
+```console
+git submodule init
+git submodule update
+```
+
+Because [Utils::Random](https://github.com/vsukhor/utils/tree/master/utils/random)
+relies on [boost](https://www.boost.org/) for generation of pseudo-random numbers, 
+*boost* header files are expected to be accessible at compile thme.
+
 The code requires a C++20 - capable compiler. It was tested on macOS (clang-12) and Ubuntu (gcc-11). 
 
-For generation of pseudo-random numbers, [utils::random](https://github.com/vsukhor/utils/tree/master/utils/random) 
-relies on either [boost](https://www.boost.org/) or [NVIDIA cuRAND](https://developer.nvidia.com/curand), 
-imported from a [library in a separate repository](https://github.com/vsukhor/utils/), so
-depending on the underlying generator chosen, one of these should be accessible (in the case
- of the boost, the headers suffice).  
-
-##### Alternative ways for building the code
-
-1. On systems having [cmake](https://cmake.org) (ver. 3.17 or higher) installed, the build can 
-    be performed e.g. as follows:  
-    `cd mitosim`  
-    `mkdir build`  
-    `cmake -S . -B build`  
-    `cmake --build build`  
-
-2. The executable can be built using GNU make system  based on the example [makefile](manual_make/Makefile)). 
-    If the library is built separately, please make sure to do this before building the executable. 
-    Use of the makefiles for both library and the main application is straightforward, and detailed 
-    instructions are given in the beginning of the makefiles. 
-
+Using [cmake](https://cmake.org) (ver. 3.15 or higher):  
+    
+```console
+cd mosaicsc  
+cmake -S . -B build  
+cmake --build build  
+```
 #### Running the simulation
 
 The simulation parameters are read from a short configuration file, structured 
@@ -64,9 +70,9 @@ as in the example [config.txt](examples/example1/config.txt).
 More details on the config file formatting can be found in the 
 utils::config [documentation](https://github.com/vsukhor/utils/blob/master/utils/config/conf_file_structure.md) 
 The file is expected to be named as 'config.txt'.
-Using the above example, and the executable 'MosaicSC_CPU', the simulation may be launched as
+Using the above example, and the executable *mosaicsc*, the simulation may be launched as
 
-`./app/MosaicSC_CPU ./examples/example1`
+`./app/mosaicsc ./examples/example1`
 
 The first argument is the path to the configuration file.
 
