@@ -49,28 +49,30 @@ void runThread( const size_t i1,
 
 int main( int argc, const char* argv[] ) 
 {
+
+    auto exit = [](const std::string& s) {
+        std::cerr << s << std::endl;
+        std::exit(EXIT_FAILURE);
+    };
+
     if (argc < 2)
-        return utils::common::exceptions::simple(
-                "Error: The path to config file is missing.", nullptr);
+        exit("Error: The path to config file is missing.");
 
     std::filesystem::path workingDir {std::string(argv[1])};
 
     auto configFile {workingDir / "config.txt"};
     if (!std::filesystem::is_regular_file(configFile))
-        return utils::common::exceptions::simple(
-        "Config file not accessible in with path " + configFile.string(), nullptr);
+        exit("Config file not accessible in with path " + configFile.string());
 
     mosaicsc::Parameters sps {configFile};
 
     sps.workingDir_in = workingDir;
     if (!std::filesystem::exists(sps.workingDir_in))
-        return utils::common::exceptions::simple(
-                    "No directory for input files is available", nullptr);
+        exit("No directory for input files is available");
 
     sps.workingDir_out = workingDir;
     if (!std::filesystem::exists(sps.workingDir_out))
-        return utils::common::exceptions::simple(
-                    "No directory for output files is available", nullptr);
+        exit("No directory for output files is available");
 
     const auto seeds {workingDir / "seeds"};
     const std::string seedfn {seeds.string()};
@@ -84,9 +86,8 @@ int main( int argc, const char* argv[] )
     const auto ntasks = sps.RUN_end - (sps.RUN_ini - 1);
 
     if (MOSAICSC_CUDA && ntasks > 1)
-        return utils::common::exceptions::simple(
-            std::string("Using CUDA is only compatible with ") +
-            "single-threaded execution.\nPlease set nthreads = 1", nullptr);
+        exit(std::string("Using CUDA is only compatible with ") +
+             "single-threaded execution.\nPlease set nthreads = 1");
 
     utils::threads::Threads<utils::threads::Weights::Equal> th {
         sps.RUN_ini,
@@ -126,8 +127,8 @@ void runThread( const size_t i1,
                 if (sps.resume) log.open(logf, std::ios::app);
                 else            log.open(logf, std::ios::trunc);
             } catch (const std::ifstream::failure&) {
-                utils::common::exceptions::simple(
-                    "Cannot open file: " + logf.string(), nullptr);
+                std::cerr << "Cannot open file: " + logf.string() << std::endl;
+                std::exit(EXIT_FAILURE);
             }
             constexpr int print_accuracy {6};
             utils::Msgr msgr {&std::cout, &log, print_accuracy};
