@@ -46,6 +46,7 @@ Parameters( const path& configFile )
 void Parameters::
 load_config( const path& file )
 {
+    using sstr = std::stringstream;
     std::string parname;
     std::string value;
     std::ifstream config {file};
@@ -59,25 +60,26 @@ load_config( const path& file )
     while (config.good()) {
         if (!preprocess_line(config, parname, value))
             continue;
-        if (     parname == "RUN_ini")        std::stringstream(value) >> RUN_ini;
-        else if (parname == "RUN_end")        std::stringstream(value) >> RUN_end;
-        else if (parname == "nthreads")       std::stringstream(value) >> nthreads;
-        else if (parname == "resume")         std::stringstream(value) >> resume;
-        else if (parname == "Niter")          std::stringstream(value) >> Niter;
-        else if (parname == "logfreq")        std::stringstream(value) >> logfreq;
-        else if (parname == "detailedfreq")   std::stringstream(value) >> detailedfreq;
-        else if (parname == "finaldetailed")  std::stringstream(value) >> finaldetailed;
-        else if (parname == "savefreq")       std::stringstream(value) >> savefreq;
+        if (     parname == "RUN_ini")        sstr(value) >> RUN_ini;
+        else if (parname == "RUN_end")        sstr(value) >> RUN_end;
+        else if (parname == "nthreads")       sstr(value) >> nthreads;
+        else if (parname == "resume")         sstr(value) >> resume;
+        else if (parname == "Niter")          sstr(value) >> Niter;
+        else if (parname == "logfreq")        sstr(value) >> logfreq;
+        else if (parname == "detailedfreq")   sstr(value) >> detailedfreq;
+        else if (parname == "finaldetailed")  sstr(value) >> finaldetailed;
+        else if (parname == "savefreq")       sstr(value) >> savefreq;
         else if (parname == "Ntot")
             initialize_arrayparam(numBasicTypes, value, "numBasicTypes", Ntot);
-        else if (parname == "dilution")       std::stringstream(value) >> dilution;
-        else if (parname == "inum")           std::stringstream(value) >> inum;
+        else if (parname == "dilution")       sstr(value) >> dilution;
+        else if (parname == "inum")           sstr(value) >> inum;
         else if (parname == "rates_f")
             initialize_arrayparam(inum, value, "inum", rates_f);
-        else if (parname == "syn")            std::stringstream(value) >> syn;
-        else if (parname == "beta")           std::stringstream(value) >> beta;
+        else if (parname == "syn")            ssstr(value) >> syn;
+        else if (parname == "beta")           sstrr(value) >> beta;
         else if (parname != "") {
-            std::cerr << "Error in config file: unknown parameter name: " << parname;
+            std::cerr << "Error in config file: unknown parameter name: "
+                      << parname << std::endl;
             std::exit(EXIT_FAILURE);
         }
     }
@@ -90,21 +92,21 @@ print( Msgr& msgr ) const
     msgr.print("Parameters: ");
     msgr.print("workingDir_in: ", workingDir_in.string());
     msgr.print("workingDir_out: ", workingDir_out.string());
-    msgr.print<true>("RUN_ini = ", RUN_ini);
-    msgr.print<true>("RUN_end = ", RUN_end);
-    msgr.print<true>("nthreads = ", nthreads);
-    msgr.print<true>("resume = ", int(resume));
-    msgr.print<true>("Niter = ", Niter);
-    msgr.print<true>("logfreq = ", logfreq);
-    msgr.print<true>("detailedfreq = ", detailedfreq);
-    msgr.print<true>("finaldetailed = ", int(finaldetailed));
-    msgr.print<true>("savefreq = ", savefreq);
+    msgr.print("RUN_ini = ", RUN_ini);
+    msgr.print("RUN_end = ", RUN_end);
+    msgr.print("nthreads = ", nthreads);
+    msgr.print("resume = ", int(resume));
+    msgr.print("Niter = ", Niter);
+    msgr.print("logfreq = ", logfreq);
+    msgr.print("detailedfreq = ", detailedfreq);
+    msgr.print("finaldetailed = ", int(finaldetailed));
+    msgr.print("savefreq = ", savefreq);
     msgr.print_vector("Ntot ", Ntot); msgr.print<true>("");
-    msgr.print<true>("dilution = ", dilution);
-    msgr.print<true>("inum = ", inum);
+    msgr.print("dilution = ", dilution);
+    msgr.print("inum = ", inum);
     msgr.print_vector("rates_f ", rates_f); msgr.print<true>("");
-    msgr.print<true>("syn = ", syn);
-    msgr.print<true>("beta = ", beta);
+    msgr.print("syn = ", syn);
+    msgr.print("beta = ", beta);
 }
 
 template<typename K>
