@@ -19,6 +19,7 @@ Ising one to the case of multiple species and interactions, and so offers a much
 often necessary for practical applications.
 
 #### Case of Respiratory Supercomplexes
+
 In living cells, mitochondrial respiratory complexes (RC) are large proteins present in the inner 
 membrane of [mitochondria](https://en.wikipedia.org/wiki/Mitochondrion) - intracellular 
 organelles crucial for energy supply, death/survival decision and other important functions. 
@@ -72,7 +73,7 @@ utils::config [documentation](https://github.com/vsukhor/utils/blob/master/utils
 The file is expected to be named as 'config.txt'.
 Using the above example, and the executable *mosaicsc*, the simulation may be launched as
 
-`./app/mosaicsc ./examples/example1`
+`./app/mosaicsc /path/to/examples/example1`
 
 The first argument is the path to the configuration file.
 

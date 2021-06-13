@@ -51,7 +51,7 @@ int main( int argc, const char* argv[] )
 
     std::filesystem::path workingDir {std::string(argv[1])};
 
-    auto configFile { workingDir / "config.txt"};
+    auto configFile {workingDir / "config.txt"};
     if (!std::filesystem::is_regular_file(configFile))
         return utils::common::exceptions::simple(
         "Config file not accessible in with path " + configFile.string(), nullptr);
