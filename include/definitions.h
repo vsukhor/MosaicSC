@@ -27,7 +27,6 @@
 #ifndef MOSAICSC_DEFINITIONS_H
 #define MOSAICSC_DEFINITIONS_H
 
-#include "utils/common/exceptions.h"
 #include "utils/common/misc.h"
 
 #define MOSAICSC_FP32    ///< Comment this out to switch to double precision.
