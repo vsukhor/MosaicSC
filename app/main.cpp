@@ -103,18 +103,18 @@ int main( int argc, const char* argv[] )
     return EXIT_SUCCESS;
 }
 
-void runThread( const utils::common::szt ii1,
-                const utils::common::szt ii2,
+void runThread( const utils::common::szt i1,
+                const utils::common::szt i2,
                 const utils::common::szt ith,
                 std::mutex& mtx,
                 const std::string& seedfilename,
                 const mosaicsc::Parameters& sps )
 {
-    for (auto ii=ii1; ii<ii2; ii++) {
+    for (auto i=i1; i<i2; i++) {
 
         mtx.lock();
 
-            const auto runname = std::to_string(ii);
+            const auto runname = std::to_string(i);
             const auto logf = sps.workingDir_out /
                 (std::string("log_") + runname + ".txt");
             std::ofstream log;
@@ -125,11 +125,6 @@ void runThread( const utils::common::szt ii1,
                 utils::common::exceptions::simple(
                     "Cannot open file: " + logf.string(), nullptr);
             }
-            std::cout.precision(6);
-            std::cout.setf(std::ios::scientific);
-            log.precision(6);
-            log.setf(std::ios::scientific);
-
             constexpr int print_accuracy {6};
             utils::common::Msgr msgr {&std::cout, &log, print_accuracy};
             sps.print(msgr);
@@ -144,7 +139,7 @@ void runThread( const utils::common::szt ii1,
                        " on ", hostname);
 
             auto R = std::make_unique<mosaicsc::RandFactory>(
-                    std::filesystem::path{seedfilename}, ii, msgr);
+                    std::filesystem::path{seedfilename}, i, msgr);
 
         mtx.unlock();
 
