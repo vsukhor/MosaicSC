@@ -75,8 +75,8 @@ load_config( const path& file )
         else if (parname == "inum")           sstr(value) >> inum;
         else if (parname == "rates_f")
             initialize_arrayparam(inum, value, "inum", rates_f);
-        else if (parname == "syn")            ssstr(value) >> syn;
-        else if (parname == "beta")           sstrr(value) >> beta;
+        else if (parname == "syn")            sstr(value) >> syn;
+        else if (parname == "beta")           sstr(value) >> beta;
         else if (parname != "") {
             std::cerr << "Error in config file: unknown parameter name: "
                       << parname << std::endl;
