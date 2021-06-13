@@ -75,7 +75,7 @@ Interactor {
 };
 
 struct
- __attribute__((packed)) __attribute__((aligned(16)))
+ __attribute__((aligned(64)))
 BaseC {
 
     using ppmf = real (*)(const real);

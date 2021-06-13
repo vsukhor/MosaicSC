@@ -84,11 +84,12 @@ int main( int argc, const char* argv[] )
             std::string("Using CUDA is only compatible with ") +
             "single-threaded execution.\nPlease set nthreads = 1", nullptr);
 
-    utils::common::Threads th {sps.RUN_ini,
-                               ntasks,
-                               0,
-                               utils::common::Threads::Weights::Equal,
-                               sps.nthreads};
+    utils::threads::Threads<utils::threads::Weights::Equal> th {
+        sps.RUN_ini,
+        ntasks,
+        0,
+        sps.nthreads
+    };
 
     for (utils::common::szt ith=0; ith<th.thr.size(); ith++)
         th.thr[ith] = std::thread( runThread, th.i1[ith],
