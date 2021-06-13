@@ -72,7 +72,7 @@ private:
     const std::string runname;  ///< Run index as a string.
     const szt         ithread;  ///< Index of CpU thread.
 
-    Msgr& msgr;       ///< Thread-local reference to logging.
+    utils::Msgr& msgr;    ///< Thread-local reference to logging.
 
     std::mutex& mtx;  ///< Thread-local reference to mutex.
 

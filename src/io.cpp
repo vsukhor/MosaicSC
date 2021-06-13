@@ -29,7 +29,7 @@
 #include <iostream>
 
 #include "utils/common/misc.h"
-#include "utils/common/msgr.h"
+#include "utils/msgr.h"
 
 #include "io.h"
 #include "potts.h"
