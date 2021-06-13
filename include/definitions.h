@@ -30,8 +30,7 @@
 #include "utils/common/exceptions.h"
 #include "utils/common/misc.h"
 #include "utils/common/stop_watch.h"
-//#include "utils/threads.h"
-#include "/Users/vs/Mitofraps/utils/utils/threads.h"
+#include "utils/threads.h"
 
 #define MOSAICSC_FP32    ///< Comment this out to switch to double precision.
 #define MOSAICSC_CUDA 0  ///< Define MOSAICSC_CUDA > 0 to switch the GPU use off
