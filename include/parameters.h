@@ -33,6 +33,8 @@
 #include <string>
 #include <vector>
 
+#include "utils/msgr.h"
+
 #include "definitions.h"
 
 namespace mosaicsc {
@@ -66,7 +68,7 @@ Parameters {
 
     explicit Parameters(const path& configFile);
 
-    void print(utils::common::Msgr& msgr) const;
+    void print(utils::Msgr& msgr) const;
 
 private:
 

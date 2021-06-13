@@ -31,6 +31,7 @@
 #include <vector>
 
 #include "utils/common/misc.h"
+#include "utils/msgr.h"
 
 #include "definitions.h"
 #include "parameters.h"
@@ -86,7 +87,7 @@ load_config( const path& file )
 }
 
 void Parameters::
-print( Msgr& msgr ) const
+print( utils::Msgr& msgr ) const
 {
     using utils::common::STR;
     msgr.print("Parameters: ");

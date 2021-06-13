@@ -31,7 +31,7 @@
 #include <fstream>
 
 #include "utils/common/misc.h"
-#include "utils/common/msgr.h"
+#include "utils/msgr.h"
 
 #include "definitions.h"
 #include "parameters.h"
@@ -52,7 +52,7 @@ struct Potts {
         const std::string&,
         szt,
         std::unique_ptr<RandFactory>&,
-        Msgr&
+        utils::Msgr&
     ) noexcept;
           
     void run() noexcept;

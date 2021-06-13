@@ -33,7 +33,7 @@
 #include <mutex>
 
 #include "utils/common/misc.h"
-#include "utils/common/msgr.h"
+#include "utils/msgr.h"
 
 #include "definitions.h"
 #include "parameters.h"
@@ -59,7 +59,7 @@ class IO {
     const std::string&   runname;
 
     Potts*                    host;
-    Msgr&                     msgr;
+    utils::Msgr&              msgr;
     std::mutex&               mtx;
     const szt                (&L)[2];    // grid dimensions: nrows, ncols
     const std::vector<SC<BaseC>>& scs;

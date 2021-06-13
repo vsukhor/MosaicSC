@@ -29,8 +29,6 @@
 
 #include "utils/common/exceptions.h"
 #include "utils/common/misc.h"
-#include "utils/common/stop_watch.h"
-#include "utils/threads.h"
 
 #define MOSAICSC_FP32    ///< Comment this out to switch to double precision.
 #define MOSAICSC_CUDA 0  ///< Define MOSAICSC_CUDA > 0 to switch the GPU use off
@@ -77,7 +75,6 @@ struct Ornt {
 };
 
 // Aliaces to utility library names.
-using Msgr = utils::common::Msgr;
 using szt = utils::common::szt;
 using uint = utils::common::uint;
 using ulong = utils::common::ulong;

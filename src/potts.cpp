@@ -27,7 +27,7 @@
 #include <iostream>
 
 #include "utils/common/misc.h"
-#include "utils/common/msgr.h"
+#include "utils/msgr.h"
 
 #include "potts.h"
 
@@ -39,7 +39,7 @@ Potts( const Parameters& sps,
        const std::string& runname,
        const szt ithread,
        std::unique_ptr<RandFactory>& rf,
-       Msgr& msgr ) noexcept
+       utils::Msgr& msgr ) noexcept
     : sps {sps}
     , runname {runname}
     , ithread {ithread}

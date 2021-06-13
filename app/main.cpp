@@ -31,17 +31,21 @@
 #include <string>
 #include <thread>
 
+#include "utils/msgr.h"
+#include "utils/stop_watch.h"
+#include "utils/threads.h"
+
 #include "definitions.h"
 #include "parameters.h"
 #include "base_component.h"
 #include "potts.h"
 
-void runThread( utils::common::szt,
-                utils::common::szt,
-                utils::common::szt,
-                std::mutex&,
-                const std::string&,
-                const mosaicsc::Parameters& );
+void runThread( const size_t i1,
+                const size_t i2,
+                const size_t ith,
+                std::mutex& mtx,
+                const std::string& seedfilename,
+                const mosaicsc::Parameters& sps );
 
 int main( int argc, const char* argv[] ) 
 {
@@ -91,7 +95,7 @@ int main( int argc, const char* argv[] )
         sps.nthreads
     };
 
-    for (utils::common::szt ith=0; ith<th.thr.size(); ith++)
+    for (size_t ith=0; ith<th.thr.size(); ith++)
         th.thr[ith] = std::thread( runThread, th.i1[ith],
                                               th.i2[ith],
                                               ith,
@@ -103,9 +107,9 @@ int main( int argc, const char* argv[] )
     return EXIT_SUCCESS;
 }
 
-void runThread( const utils::common::szt i1,
-                const utils::common::szt i2,
-                const utils::common::szt ith,
+void runThread( const size_t i1,
+                const size_t i2,
+                const size_t ith,
                 std::mutex& mtx,
                 const std::string& seedfilename,
                 const mosaicsc::Parameters& sps )
@@ -126,10 +130,10 @@ void runThread( const utils::common::szt i1,
                     "Cannot open file: " + logf.string(), nullptr);
             }
             constexpr int print_accuracy {6};
-            utils::common::Msgr msgr {&std::cout, &log, print_accuracy};
+            utils::Msgr msgr {&std::cout, &log, print_accuracy};
             sps.print(msgr);
             
-            utils::common::StopWatch stopwatch;
+            utils::StopWatch stopwatch;
             stopwatch.start();
 
             constexpr int buffersize {1024};
