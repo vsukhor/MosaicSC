@@ -50,7 +50,7 @@ git submodule init
 git submodule update
 ```
 
-Because [Utils::Random](https://github.com/vsukhor/utils/tree/master/utils/random)
+Because [utils::random](https://github.com/vsukhor/utils/tree/master/utils/random)
 relies on [boost](https://www.boost.org/) for generation of pseudo-random numbers, 
 *boost* header files are expected to be accessible at compile thme.
 
