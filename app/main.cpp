@@ -44,7 +44,6 @@ void runThread( const size_t i1,
                 const size_t i2,
                 const size_t ith,
                 std::mutex& mtx,
-                const std::string& seedfilename,
                 const mosaicsc::Parameters& sps );
 
 int main( int argc, const char* argv[] ) 
@@ -74,11 +73,6 @@ int main( int argc, const char* argv[] )
     if (!std::filesystem::exists(sps.workingDir_out))
         exit("No directory for output files is available");
 
-    const auto seeds {workingDir / "seeds"};
-    const std::string seedfn {seeds.string()};
-    if (!std::filesystem::exists(seeds))
-        mosaicsc::RandFactory::make_seed(seeds, nullptr);
-
     mosaicsc::BaseC::set_statics(&sps);
 
     std::mutex mtx;
@@ -101,7 +95,6 @@ int main( int argc, const char* argv[] )
                                               th.i2[ith],
                                               ith,
                                               std::ref(mtx),
-                                              std::cref(seedfn),
                                               std::cref(sps) );
     th.join();
 
@@ -112,7 +105,6 @@ void runThread( const size_t i1,
                 const size_t i2,
                 const size_t ith,
                 std::mutex& mtx,
-                const std::string& seedfilename,
                 const mosaicsc::Parameters& sps )
 {
     for (auto i=i1; i<i2; i++) {
@@ -143,8 +135,7 @@ void runThread( const size_t i1,
             msgr.print("Run ", runname, " started: ", stopwatch.start.str,
                        " on ", hostname);
 
-            auto R = std::make_unique<mosaicsc::RandFactory>(
-                    std::filesystem::path{seedfilename}, i, msgr);
+            auto R = std::make_unique<mosaicsc::RandFactory>(i, msgr);
 
         mtx.unlock();
 
