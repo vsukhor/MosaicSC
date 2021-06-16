@@ -89,7 +89,6 @@ load_config( const path& file )
 void Parameters::
 print( utils::Msgr& msgr ) const
 {
-    using utils::common::STR;
     msgr.print("Parameters: ");
     msgr.print("workingDir_in: ", workingDir_in.string());
     msgr.print("workingDir_out: ", workingDir_out.string());
@@ -126,7 +125,7 @@ initialize_arrayparam( const szt len,
     par.resize(len);
     const std::string emp {" "}, tab {"\t"};
     for (szt j=0; j<len; j++) {
-        ulong e {value.find(emp)};
+        unsigned long e {value.find(emp)};
         if (e == std::string::npos) e = value.find(tab);
         if (e == std::string::npos) e = value.length();
         const std::string val {value.substr(0, e)};
@@ -154,7 +153,7 @@ preprocess_line( std::ifstream& config,
     const std::string emp {" "}, tab {"\t"};
     std::string line;
     getline(config, line);
-    ulong commentpos {line.find_first_of('#')};
+    unsigned long commentpos {line.find_first_of('#')};
     if (commentpos != std::string::npos)
         line.erase(commentpos);
     if (!line.length())

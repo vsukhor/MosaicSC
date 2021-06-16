@@ -37,7 +37,7 @@ C(  const szt ind,
     : BaseC {ind, di, pos}
 {}
 
-A2<utils::common::szt> C<1>::
+A2<utils::szt> C<1>::
 initialize( const A2<szt>& ini,
             vec2szt& tp,
             vec2ort& di,
@@ -78,7 +78,7 @@ hamming_dist( const szt i,
 
     for (const auto& o : phb)
         if (interacts(o))
-            return utils::common::INF<real>;
+            return utils::INF<real>;
 
     real h {};
     for (const auto& o : itr)

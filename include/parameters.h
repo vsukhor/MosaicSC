@@ -44,7 +44,7 @@ Parameters {
 
     using path = std::filesystem::path;
 
-    static constexpr ulong numBasicTypes {4};
+    static constexpr unsigned long numBasicTypes {4};
 
     path workingDir_in;
     path workingDir_out;
@@ -59,7 +59,7 @@ Parameters {
     szt finaldetailed;
     szt savefreq;
 
-    std::vector<ulong> Ntot;
+    std::vector<unsigned long> Ntot;
     real               dilution;
     uint               inum;
     std::vector<real>  rates_f;

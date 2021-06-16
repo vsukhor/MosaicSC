@@ -160,12 +160,12 @@ run() noexcept
         // Calculate the new energies and decide based on the energy difference
         // between the old and new configurations:
         if (const auto e1new = hamming_dist(t1new, d1new, i1, j1);
-            e1new < utils::common::INF<real>) {
+            e1new < utils::INF<real>) {
             if (const auto e2new = hamming_dist(t2new, d2new, i2, j2);
-                e2new < utils::common::INF<real>) {
+                e2new < utils::INF<real>) {
                 // Metropolis condition on energy difference:
                 if (const auto dE = e1new + e2new - e1old - e2old;
-                    dE < utils::common::zero<real> ||
+                    dE < utils::zero<real> ||
                     rf->r01u() < std::exp(-sps.beta * dE)) {
                     // the move is accepted: increment
                     if (it % sps.logfreq == 0)
@@ -239,10 +239,9 @@ hamming_dist( const szt t,
               const szt i,
               const szt j ) const noexcept
 {
-    namespace Cmn = utils::common;
     XASSERT(t<=Parameters::numBasicTypes,
-            "Type not found for t = " + Cmn::STR(t));
-    if (t == 0) return Cmn::zero<real>;
+            "Type not found for t = " + std::to_string(t));
+    if (t == 0) return utils::zero<real>;
     if (t == 4) return C<4>::hamming_dist(i, j, d, tp, di, L);
     if (t == 2) return C<2>::hamming_dist(i, j, d, tp, di, L);
     if (t == 3) return C<3>::hamming_dist(i, j, d, tp, di, L);
@@ -286,16 +285,16 @@ void Potts::
 eTot() noexcept
 {
     set_gE();
-    std::fill(cE.begin(), cE.end(), utils::common::zero<real>);
+    std::fill(cE.begin(), cE.end(), utils::zero<real>);
     for (szt i=0; i<L[0]; i++)
         for (szt j=0; j<L[1]; j++)
-            cE[tp[i][j]] += gE[i][j] / utils::common::two<real>;
+            cE[tp[i][j]] += gE[i][j] / utils::two<real>;
 }
 
 void Potts::
 set_gE() noexcept
 {
-    utils::common::Vec2::fill<real>(gE, utils::common::zero<real>);
+    utils::common::Vec2::fill<real>(gE, utils::zero<real>);
     for (szt i=0; i<L[0]; i++)
         for (szt j=0; j<L[1]; j++)
             gE[i][j] = hamming_dist(tp[i][j], di[i][j], i, j);
@@ -304,7 +303,7 @@ void Potts::
 setSCs() noexcept
 {
     scs.clear();
-    utils::common::Vec2::fill<szt>(mskSC, utils::common::zero<szt>);
+    utils::common::Vec2::fill<szt>(mskSC, utils::zero<szt>);
     for (szt i=0; i<L[0]; i++)
         for (szt j=0; j<L[1]; j++)
             if (!mskSC[i][j] && tp[i][j]) {

@@ -62,7 +62,7 @@ struct Ornt {
     static constexpr T up {1};
     static constexpr T no {0};
     static constexpr T dw {-1};
-    static constexpr T nd {utils::common::huge<T>};
+    static constexpr T nd {utils::huge<T>};
 
     // Return the up side down orientation:
     static constexpr T usd( const T from )
@@ -74,13 +74,11 @@ struct Ornt {
 };
 
 // Aliaces to utility library names.
-using szt = utils::common::szt;
-using uint = utils::common::uint;
-using ulong = utils::common::ulong;
-using vec2real = utils::common::vec2<real>;
-using vec2szt = utils::common::vec2<szt>;
-using vec2uint = utils::common::vec2<uint>;
-using vec2ort = utils::common::vec2<Ornt::T>;
+using szt = utils::szt;
+using vec2real = utils::vec2<real>;
+using vec2szt = utils::vec2<szt>;
+using vec2uint = utils::vec2<uint>;
+using vec2ort = utils::vec2<Ornt::T>;
 
 // Template to be futrther customized in component type-specific
 // template specializations.

@@ -116,8 +116,8 @@ BaseC {
         szt,
         szt,
         const long[2],
-        const utils::common::vec2<szt>&,
-        const utils::common::vec2<Ornt::T>&,
+        const utils::vec2<szt>&,
+        const utils::vec2<Ornt::T>&,
         const szt[]
     ) noexcept;
 
@@ -137,7 +137,7 @@ BaseC {
     ) noexcept;
 
     virtual void set_conn(
-        const utils::common::vec2<szt>& tp,
+        const utils::vec2<szt>& tp,
         const szt L[]
     ) noexcept = 0;
                 

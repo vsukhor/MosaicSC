@@ -34,7 +34,7 @@
 
 namespace mosaicsc {
 
-using utils::common::szt;
+using utils::szt;
 
 template <typename BC>
 struct SC {

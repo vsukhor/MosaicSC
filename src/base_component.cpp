@@ -58,7 +58,7 @@ set_statics( Parameters const *sps_ ) noexcept
     k_4_4 =  sps->rates_f[8];
 
     syn = sps->syn;
-    ph = (syn != utils::common::one<real>)
+    ph = (syn != utils::one<real>)
        ? fun_hs
        : fun_h;
 }
@@ -78,7 +78,7 @@ is_occupied( const szt t,
            di[p[0]][p[1]] == ornt;
 }
 
-A2<utils::common::szt> BaseC::
+A2<utils::szt> BaseC::
 position( const szt i,
           const szt j,
           const long sh[2],

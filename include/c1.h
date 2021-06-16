@@ -27,7 +27,7 @@
 #ifndef MOSAICSC_C1_H
 #define MOSAICSC_C1_H
 
-#include "utils/common/constants.h"
+#include "utils/constants.h"
 
 #include "base_component.h"
 
