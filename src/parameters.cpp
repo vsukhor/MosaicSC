@@ -51,8 +51,8 @@ load_config( const path& file )
     std::string parname;
     std::string value;
     std::ifstream config {file};
-    if (!config.is_open()) {
-        std::cerr << "Cannot open file: " << file.string();
+    if (config.fail()) {
+        std::cerr << "Cannot open file: " << file;
         std::exit(EXIT_FAILURE);
     }
 
@@ -90,8 +90,8 @@ void Parameters::
 print( utils::Msgr& msgr ) const
 {
     msgr.print("Parameters: ");
-    msgr.print("workingDir_in: ", workingDir_in.string());
-    msgr.print("workingDir_out: ", workingDir_out.string());
+    msgr.print("workingDir_in: ", workingDir_in);
+    msgr.print("workingDir_out: ", workingDir_out);
     msgr.print("RUN_ini = ", RUN_ini);
     msgr.print("RUN_end = ", RUN_end);
     msgr.print("nthreads = ", nthreads);

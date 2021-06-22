@@ -119,7 +119,7 @@ void runThread( const size_t i1,
                 if (sps.resume) log.open(logf, std::ios::app);
                 else            log.open(logf, std::ios::trunc);
             } catch (const std::ifstream::failure&) {
-                std::cerr << "Cannot open file: " + logf.string() << std::endl;
+                std::cerr << "Cannot open file: " << logf << std::endl;
                 std::exit(EXIT_FAILURE);
             }
             constexpr int print_accuracy {6};
