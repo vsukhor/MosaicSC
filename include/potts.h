@@ -43,7 +43,7 @@ namespace mosaicsc {
 
 struct Potts {
 
-    friend class IO;
+    friend IO;
 
     /// The only constructor.
     explicit Potts(

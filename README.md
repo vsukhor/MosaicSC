@@ -24,7 +24,7 @@ In living cells, mitochondrial respiratory complexes (RC) are large proteins pre
 membrane of [mitochondria](https://en.wikipedia.org/wiki/Mitochondrion) - intracellular 
 organelles crucial for energy supply, death/survival decision and other important functions. 
 Recently, it became known that the complexes themselves function as building blocks for even
- larger protein aggregations termed supercomplexes (SCs), but theis exact composition is not 
+ larger protein aggregations termed supercomplexes (SCs), but their exact composition is not 
  clear, and is possibly variable, dependent on specific conditions set by current state of the mitochondria.
 
 The software package here incorporates details of the RC interactions to reconstruct 

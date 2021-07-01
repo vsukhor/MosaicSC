@@ -303,7 +303,7 @@ void Potts::
 setSCs() noexcept
 {
     scs.clear();
-    utils::common::Vec2::fill<szt>(mskSC, utils::zero<szt>);
+    utils::common::Vec2::fill<szt>(mskSC, 0);
     for (szt i=0; i<L[0]; i++)
         for (szt j=0; j<L[1]; j++)
             if (!mskSC[i][j] && tp[i][j]) {

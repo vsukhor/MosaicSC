@@ -50,7 +50,7 @@ struct Potts;
 
 class IO {
 
-    friend struct Potts;
+    friend Potts;
 
     IO(Potts* host) noexcept;  // The only constructor
 
