@@ -94,4 +94,4 @@ private:
 
 }  // namespace mosaicsc
 
-#endif // MOSAICSC_PARAMETERS_H
+#endif  // MOSAICSC_PARAMETERS_H
