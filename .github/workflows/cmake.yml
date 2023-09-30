@@ -36,7 +36,7 @@ jobs:
             }
 
     steps:
-    - uses: actions/checkout@v4
+    - uses: actions/checkout@v3
       with:
         submodules: 'true'
     - name: Install dependencies on macOS
@@ -81,7 +81,7 @@ jobs:
     - name: Build
       run: cmake --build ${{github.workspace}}/build --config ${{env.BUILD_TYPE}}
 
-    - uses: actions/upload-artifact@v4
+    - uses: actions/upload-artifact@v3
       with:
         name: MosaicSC_cpu-${{ matrix.config.os }}
         path: ${{github.workspace}}/app/MosaicSC_CPU
