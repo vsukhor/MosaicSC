@@ -27,7 +27,7 @@ jobs:
                 generators: "Ninja"
             }
             - {
-                name: "Ubuntu_latest_gcc-13",
+                name: "Ubuntu_latest_gcc-14",
                 os: ubuntu-latest,
                 build_type: "Release",
                 cc: "gcc",
@@ -36,7 +36,7 @@ jobs:
             }
 
     steps:
-    - uses: actions/checkout@v3
+    - uses: actions/checkout@v4
       with:
         submodules: 'true'
     - name: Install dependencies on macOS
@@ -48,8 +48,8 @@ jobs:
           mkdir -p ${{github.workspace}}/build/tests
           cp -r ${{github.workspace}}/tests/data ${{github.workspace}}/build/tests
 
-    - name: Install dependencies on Ubuntu_latest_gcc-13
-      if: startsWith(matrix.config.name, 'Ubuntu_latest_gcc-13')
+    - name: Install dependencies on Ubuntu_latest_gcc-14
+      if: startsWith(matrix.config.name, 'Ubuntu_latest_gcc-14')
       run: |
           mkdir -p ${{github.workspace}}/build
           mkdir -p ${{github.workspace}}/build/tests
@@ -59,8 +59,8 @@ jobs:
           gcc --version
           sudo add-apt-repository ppa:ubuntu-toolchain-r/test
           sudo apt-get update
-          sudo apt-get install ninja-build gcc-13 g++-13
-          sudo update-alternatives --install /usr/bin/gcc gcc /usr/bin/gcc-13 90 --slave /usr/bin/g++ g++ /usr/bin/g++-13 --slave /usr/bin/gcov gcov /usr/bin/gcov-13
+          sudo apt-get install ninja-build gcc-14 g++-14
+          sudo update-alternatives --install /usr/bin/gcc gcc /usr/bin/gcc-14 90 --slave /usr/bin/g++ g++ /usr/bin/g++-14 --slave /usr/bin/gcov gcov /usr/bin/gcov-14
           echo gcc version after
           gcc --version
           echo =============== Get BOOST =======================================
@@ -81,7 +81,7 @@ jobs:
     - name: Build
       run: cmake --build ${{github.workspace}}/build --config ${{env.BUILD_TYPE}}
 
-    - uses: actions/upload-artifact@v3
+    - uses: actions/upload-artifact@v4
       with:
         name: MosaicSC_cpu-${{ matrix.config.os }}
         path: ${{github.workspace}}/app/mosaicsc
