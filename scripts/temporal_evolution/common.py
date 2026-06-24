@@ -49,7 +49,7 @@ def _read_log(fname):
 
     with open(fname, 'r') as f:
         cf.readin(f)
-        skip_lines(3, f)
+        skip_lines(2, f)
         rs.runs = [int(f.readline().split()[2])]
         rs.seed = [int(f.readline().split()[2])]
         rs.lattice_dims = [int(x) for x in f.readline().split()[2:]]

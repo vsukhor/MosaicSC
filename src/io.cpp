@@ -24,15 +24,14 @@
 ================================================================================
 */
 
+#include "mosaicsc/io.h"
+#include "mosaicsc/potts.h"
+#include "utils/logger.h"
+#include "utils/msgr.h"
+
 #include <filesystem>
 #include <fstream>
 #include <iostream>
-
-#include "utils/common/misc.h"
-#include "utils/msgr.h"
-
-#include "io.h"
-#include "potts.h"
 
 namespace mosaicsc {
 
@@ -40,11 +39,10 @@ struct Potts;
 
 
 IO::
-IO( Potts* host ) noexcept
+IO(Potts* host) noexcept
     : sps {host->sps}
     , runname {host->runname}
     , host {host}
-    , msgr {host->msgr}
     , mtx {host->mtx}
     , L {host->L}
     , scs {host->scs}
@@ -77,8 +75,6 @@ print_lattice( const szt i1,
                const szt x0,
                const szt x1 ) const noexcept
 {
-                if(host->it == 20)
-                std::cout << "";
     std::cout << std::endl;
     for (szt i=0; i<L[0]; i++) {
         for (szt j=x0; j<x1; j++) {
@@ -150,13 +146,12 @@ print_gE_color( const szt i1,
                 const szt i2,
                 const szt j2 ) const noexcept
 {
-    constexpr auto zeror = utils::zero<real>;
     for (szt i=0; i<L[0]; i++) {
         for (szt j=0; j<L[1]; j++) {
             auto cl {utils::ANSI_FG_WHITE};
-            if (    tp[i][j] != 0)    cl = utils::ANSI_FG_YELLOW;
-            if (    gE[i][j] < zeror) cl = utils::ANSI_FG_BLUE;
-            else if(gE[i][j] > zeror) cl = utils::ANSI_FG_RED;
+            if (    tp[i][j] != 0) cl = utils::ANSI_FG_YELLOW;
+            if (    gE[i][j] < 0) cl = utils::ANSI_FG_BLUE;
+            else if(gE[i][j] > 0) cl = utils::ANSI_FG_RED;
 //            auto cb = utils::ANSI_BOLD_OFF;
             if ((i == i1 && j == j1) ||
                 (i == i2 && j == j2))
@@ -221,10 +216,10 @@ void IO::
 logline( std::ostream& ofs, const szt itt,
          const szt i1, const szt j1,
          const szt i2, const szt j2,
-         const szt t1old, const Ornt::T d1old,
-         const szt t2old, const Ornt::T d2old,
-         const szt t1new, const Ornt::T d1new,
-         const szt t2new, const Ornt::T d2new,
+         const szt t1old, const Ornt::value_t d1old,
+         const szt t2old, const Ornt::value_t d2old,
+         const szt t1new, const Ornt::value_t d1new,
+         const szt t2new, const Ornt::value_t d2new,
          const real e1old, const real e2old,
          const real e1new, const real e2new, const real dE ) const noexcept
 {
@@ -239,7 +234,7 @@ logline( std::ostream& ofs, const szt itt,
         << " eNew: " << e1new << " " << e2new
         << " dE " << dE;
     ofs << " cE "; for (const auto o : cE) ofs << o << " ";
-    ofs << "Etot " << utils::common::avg(cE) << std::endl;
+    ofs << "Etot " << utils::avg(cE) << std::endl;
     ofs << " nSC " << scs.size();
 
     A2<real[BaseC::NT]> mv = host->massvarSC();
@@ -266,10 +261,10 @@ void IO::
 output( const bool startnew, const szt itt,
         const szt i1, const szt j1,
         const szt i2, const szt j2,
-        const szt t1old, const Ornt::T d1old,
-        const szt t2old, const Ornt::T d2old,
-        const szt t1new, const Ornt::T d1new,
-        const szt t2new, const Ornt::T d2new,
+        const szt t1old, const Ornt::value_t d1old,
+        const szt t2old, const Ornt::value_t d2old,
+        const szt t1new, const Ornt::value_t d1new,
+        const szt t2new, const Ornt::value_t d2new,
         const real e1old, const real e2old,
         const real e1new, const real e2new,
         const real dE ) const noexcept
@@ -278,18 +273,18 @@ output( const bool startnew, const szt itt,
     host->setSCs();
     if (sps.detailedfreq > 0 &&
         (host->it % sps.detailedfreq == 0 ||
-         host->it > sps.Niter - sps.finaldetailed)) {
+         host->it > sps.nsteps - sps.finaldetailed)) {
         mtx.lock();
-            print_lattice(i1, j1, i2, j2);
-//        print_gE_color(i1, j1, i2, j2);
-//        print_gE_bw(i1, j1, i2, j2);
+//            print_lattice(i1, j1, i2, j2);
+//            print_gE_color(i1, j1, i2, j2);
+//            print_gE_bw(i1, j1, i2, j2);
             print_orient();
             print_mskSC();
         mtx.unlock();
     }
     mtx.lock();
-    logline(*msgr.so, itt, i1, j1, i2, j2, t1old, d1old, t2old, d2old, t1new, d1new, t2new, d2new, e1old, e2old, e1new, e2new, dE);
-    logline(*msgr.sl, itt, i1, j1, i2, j2, t1old, d1old, t2old, d2old, t1new, d1new, t2new, d2new, e1old, e2old, e1new, e2new, dE);
+    logline(*msgr->so, itt, i1, j1, i2, j2, t1old, d1old, t2old, d2old, t1new, d1new, t2new, d2new, e1old, e2old, e1new, e2new, dE);
+    logline(*msgr->sl, itt, i1, j1, i2, j2, t1old, d1old, t2old, d2old, t1new, d1new, t2new, d2new, e1old, e2old, e1new, e2new, dE);
     if (host->it % sps.savefreq == 0) {
         write(startnew, 0, host->it);
 //        write_lattice(startnew, 0, it);
@@ -304,13 +299,13 @@ write( const bool startnew,
        const szt itt ) const
 {
     auto file {last
-        ? sps.workingDir_out / (std::string("scs_last_")+runname)
-        : sps.workingDir_out / (std::string("scs_")+runname)};
+        ? sps.workingDir_out / ("scs_last_"s+runname)
+        : sps.workingDir_out / ("scs_"s+runname)};
     std::ofstream ofs {file, startnew ? std::ios::binary | std::ios::trunc
-                                       : std::ios::binary | std::ios::app};
+                                      : std::ios::binary | std::ios::app};
     if (ofs.fail())
-        throw utils::common::Exception {
-            "Error in write: Cannot open file: "+file.string(), &msgr
+        throw utils::Exception {
+            "Error in write: Cannot open file: "+file.string(), msgr
         };
 
     if (startnew) {
@@ -335,14 +330,14 @@ write_lattice( const bool startnew,
                const szt itt ) const
 {
     auto file = last
-        ? sps.workingDir_out / (std::string("lat_last_")+runname)
-        : sps.workingDir_out / (std::string("lat_")+runname);
+        ? sps.workingDir_out / ("lat_last_"s+runname)
+        : sps.workingDir_out / ("lat_"s+runname);
     auto flags = startnew ? std::ios::binary | std::ios::trunc
                           : std::ios::binary | std::ios::app;
     std::ofstream ofs {file, flags};
     if (ofs.fail())
-        throw utils::common::Exception {
-                "Error in write_lattice: Cannot open file: "+file.string(), &msgr
+        throw utils::Exception {
+            "Error in write_lattice: Cannot open file: "+file.string(), msgr
         };
 
     if (startnew) {
@@ -360,23 +355,23 @@ write_lattice( const bool startnew,
 }
 
 szt IO::
-readin_lattice()
+read_lattice()
 {
     szt itt;
-    auto file = sps.workingDir_out / (std::string("lat_last_") + runname);
+    auto file = sps.workingDir_out / ("lat_last_"s + runname);
     std::ifstream ifs {file, std::ios::binary};
     if(ifs.fail())
-        throw utils::common::Exception {
-            "Error in read_lattice: Cannot open file: " + file.string(), &msgr
+        throw utils::Exception {
+            "Error in read_lattice: Cannot open file: " + file.string(), msgr
         };
 
     szt l0, l1;
     ifs.read(reinterpret_cast<char*>(&l0), sizeof(szt));
     ifs.read(reinterpret_cast<char*>(&l1), sizeof(szt));
     if (l0 != L[0] || l1 != L[1])
-        throw utils::common::Exception {
+        throw utils::Exception {
             "Error in read_lattice: Lattice dimensions do not agree: "+
-            file.string(), &msgr
+            file.string(), msgr
         };
 
     ifs.read(reinterpret_cast<char*>(&itt), sizeof(szt));

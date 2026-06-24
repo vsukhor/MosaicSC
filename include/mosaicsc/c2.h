@@ -27,14 +27,18 @@
 #ifndef MOSAICSC_C2_H
 #define MOSAICSC_C2_H
 
-#include "utils/common/misc.h"
-
-#include "base_component.h"
+#include "mosaicsc/base_component.h"
+#include "utils/misc.h"
+#include <array>
+#include <fstream>
 
 namespace mosaicsc {
 
+/// Component type 2
 template <>
 struct C<2> : public BaseC {
+
+    using BaseC::BaseC;
 
     static constexpr szt type {2};
 
@@ -52,12 +56,6 @@ struct C<2> : public BaseC {
 
     std::array<int, itr.size()> conn;
 
-    explicit C(
-        szt ind,
-        Ornt::T di,
-        const A2<szt>& pos
-    ) noexcept;
-
     static A2<szt> initialize(
         const A2<szt>&,
         vec2szt&,
@@ -68,7 +66,7 @@ struct C<2> : public BaseC {
     static real hamming_dist(
         szt,
         szt,
-        Ornt::T,
+        Ornt::value_t,
         const vec2szt&,
         const vec2ort&,
         const szt[]

@@ -24,20 +24,12 @@
 ================================================================================
 */
 
-#include "utils/common/misc.h"
-
-#include "c2.h"
+#include "mosaicsc/c2.h"
+#include "utils/misc.h"
 
 namespace mosaicsc {
 
-C<2>::
-C( const szt ind,
-    const Ornt::T di,
-    const A2<szt>& pos ) noexcept
-    : BaseC {ind, di, pos}
-{}
-
-A2<utils::szt> C<2>::
+A2<std::size_t> C<2>::
 initialize( const A2<szt>& ini,
             vec2szt& tp,
             vec2ort& di,
@@ -46,7 +38,7 @@ initialize( const A2<szt>& ini,
     szt row {ini[0]};
     szt pos {ini[1]};
     auto orient = row == 0 ? Ornt::up : Ornt::dw;
-    for (szt i=0; i<BaseC::sps->Ntot[type-1]; i++) {
+    for (szt i=0; i<BaseC::sps->nparticles[type-1]; i++) {
         if (pos == L1 && orient == Ornt::up) {
             pos = 0;
             row = 4;
@@ -62,13 +54,14 @@ initialize( const A2<szt>& ini,
 
 real C<2>::
 hamming_dist( const szt i,
-     const szt j,
-     const Ornt::T ornt,
-     const vec2szt& tp,
-     const vec2ort& di,
-     const szt L[] ) noexcept
+              const szt j,
+              const Ornt::value_t ornt,
+              const vec2szt& tp,
+              const vec2ort& di,
+              const szt L[]) noexcept
 {
-    auto interacts = [&](auto& o) {
+    auto interacts = [&](auto& o)
+    {
         return ((ornt == o.so            &&
                  is_occupied(o.t, o.di,            i, j, o.sh, tp, di, L)) ||
                 (ornt == Ornt::usd(o.so) &&
@@ -107,12 +100,11 @@ set_conn( const vec2szt& tp,
 }
 
 bool C<2>::
-node_is_occupied(
-              const szt i,
-              const szt j,
-              const vec2szt& tp,
-              const vec2ort& , // di
-              const szt[]) noexcept
+node_is_occupied( const szt i,
+                  const szt j,
+                  const vec2szt& tp,
+                  const vec2ort& , // di
+                  const szt[]) noexcept
 {
     return tp[i][j] == type;
 }
@@ -120,14 +112,14 @@ node_is_occupied(
 void C<2>::
 write( std::ofstream &ofs ) const
 {
-    ofs.write((char*const) &ind, sizeof(ind));
-    ofs.write((char*const) &type, sizeof(type));
-    ofs.write((char*const) &di, sizeof(di));
-    auto k = pos[0]; ofs.write((char*const) &k, sizeof(k));
-         k = pos[1]; ofs.write((char*const) &k, sizeof(k));
+    ofs.write((char const*)&ind, sizeof(ind));
+    ofs.write((char const*)&type, sizeof(type));
+    ofs.write((char const*)&di, sizeof(di));
+    auto k = pos[0]; ofs.write((char const*)&k, sizeof(k));
+         k = pos[1]; ofs.write((char const*)&k, sizeof(k));
 
     for (const auto& o : conn)
-        ofs.write((char*const) &o, sizeof(o));
+        ofs.write((char const*)&o, sizeof(o));
 }
 
 }  // namespace mosaicsc

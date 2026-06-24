@@ -27,22 +27,22 @@
 #ifndef MOSAICSC_IO_H
 #define MOSAICSC_IO_H
 
-#include <filesystem>
-#include <fstream>
-#include <iostream>
-#include <mutex>
+#include "mosaicsc/definitions.h"
+#include "mosaicsc/parameters.h"
+#include "mosaicsc/base_component.h"
+#include "mosaicsc/c1.h"
+#include "mosaicsc/c2.h"
+#include "mosaicsc/c3.h"
+#include "mosaicsc/c4.h"
+#include "mosaicsc/sc.h"
 
-#include "utils/common/misc.h"
+#include "utils/misc.h"
 #include "utils/msgr.h"
 
-#include "definitions.h"
-#include "parameters.h"
-#include "base_component.h"
-#include "c1.h"
-#include "c2.h"
-#include "c3.h"
-#include "c4.h"
-#include "sc.h"
+#include <fstream>
+#include <mutex>
+#include <string>
+#include <vector>
 
 namespace mosaicsc {
 
@@ -52,22 +52,21 @@ class IO {
 
     friend Potts;
 
-    IO(Potts* host) noexcept;  // The only constructor
+    IO(Potts* host) noexcept;  ///< The only constructor
 
     static constexpr szt screenWidth {70};
     const Parameters&    sps;
     const std::string&   runname;
 
     Potts*                    host;
-    utils::Msgr&              msgr;
     std::mutex&               mtx;
-    const szt                (&L)[2];    // grid dimensions: nrows, ncols
+    const szt                (&L)[2];   ///< Grid dimensions: nrows, ncols
     const std::vector<SC<BaseC>>& scs;
     const vec2szt&           mskSC;
-    vec2szt&                 tp;        // grid node complex types
-    vec2ort&                 di;        // grid node orientations
-    const std::vector<real>& cE;        // complex energy values
-    const vec2real&          gE;        // grid energy valuse
+    vec2szt&                 tp;        ///< Grid node complex types
+    vec2ort&                 di;        ///< Grid node orientations
+    const std::vector<real>& cE;        ///< Complex energy values
+    const vec2real&          gE;        ///< Grid energy values
 
     void print_lattice(szt, szt, szt, szt) const noexcept;
     void print_lattice(szt, szt, szt,
@@ -81,24 +80,23 @@ class IO {
 
     void logline(std::ostream&, szt,
                  szt, szt, szt, szt,
-                 szt, Ornt::T, szt, Ornt::T,
-                 szt, Ornt::T, szt, Ornt::T,
+                 szt, Ornt::value_t, szt, Ornt::value_t,
+                 szt, Ornt::value_t, szt, Ornt::value_t,
                  real, real, real,
                  real, real) const noexcept;
 
     void output(bool, szt,
                 szt, szt, szt,
-                szt, szt, Ornt::T,
-                szt, Ornt::T, szt,
-                Ornt::T, szt, Ornt::T,
+                szt, szt, Ornt::value_t,
+                szt, Ornt::value_t, szt,
+                Ornt::value_t, szt, Ornt::value_t,
                 real, real, real,
                 real, real) const noexcept;
 
     int write(        bool, bool, szt) const;
     int write_lattice(bool, bool, szt) const;
 
-    szt readin_lattice();
-
+    szt read_lattice();
 };
 
 }  // namespace mosaicsc

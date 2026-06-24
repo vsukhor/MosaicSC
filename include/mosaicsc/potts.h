@@ -27,19 +27,23 @@
 #ifndef MOSAICSC_POTTS_H
 #define MOSAICSC_POTTS_H
 
-#include <iostream>
-#include <fstream>
+#include "mosaicsc/definitions.h"
+#include "mosaicsc/parameters.h"
+#include "mosaicsc/sc.h"
+#include "mosaicsc/io.h"
 
-#include "utils/common/misc.h"
+#include "utils/misc.h"
 #include "utils/msgr.h"
 
-#include "definitions.h"
-#include "parameters.h"
-#include "sc.h"
-#include "io.h"
+#include <array>
+#include <iostream>
+#include <fstream>
+#include <memory>
+#include <mutex>
+#include <string>
+#include <vector>
 
 namespace mosaicsc {
-
 
 struct Potts {
 
@@ -51,28 +55,29 @@ struct Potts {
         std::mutex&,
         const std::string&,
         szt,
-        std::unique_ptr<RandFactory>&,
-        utils::Msgr&
+        std::unique_ptr<RandFactory>&
     ) noexcept;
-          
+
     void run() noexcept;
 
 private:
 
-    static constexpr real kB {static_cast<real>(1.38064852e-23)};    // J/K
-    static constexpr szt  screenWidth {70};  ///> Assumed screen width.
-    static constexpr szt numRows {5};   ///< Number of rows in the lattice.
+    static constexpr real kB {static_cast<real>(1.38064852e-23)};  ///< J/K
+    static constexpr szt  screenWidth {70};  ///< Assumed screen width.
+    static constexpr szt  numRows {5};       ///< Number of rows in the lattice.
 
-    /// Lattice row indexes for aech olecule type.
-    const vec2uint typeRows {{}, {0,4}, {0,4}, {2}, {1,3}};
+    /// Lattice row indexes for each molecule type.
+    const std::array<std::vector<uint>, BaseC::NT> typeRows {{
+        {}, {0,4}, {0,4}, {2}, {1,3}
+    }};
     /// Molecule types having access to each of the five lattice roes.
-    const vec2uint rowTypes {{1,2}, {4}, {3}, {4}, {1,2}};
+    const std::array<std::vector<uint>, numRows> rowTypes {{
+        {1,2}, {4}, {3}, {4}, {1,2}
+    }};
 
     const Parameters& sps;      ///< Simulation arameters.
     const std::string runname;  ///< Run index as a string.
     const szt         ithread;  ///< Index of CpU thread.
-
-    utils::Msgr& msgr;    ///< Thread-local reference to logging.
 
     std::mutex& mtx;  ///< Thread-local reference to mutex.
 
@@ -84,7 +89,7 @@ private:
     std::vector<SC<BaseC>> scs;    ///< Aggregates.
     vec2szt                mskSC;  ///< Mask of aggregates over the grid.
 
-    std::array<vec2uint,BaseC::NT> ocPos, emPos;
+    std::array<vec2uint, BaseC::NT> ocPos, emPos;
 
     vec2szt    tp;    ///< Grid node complex types.
     vec2ort    di;    ///< Grid node orientations.
@@ -95,9 +100,9 @@ private:
     vec2real          gE;  ///< Energies per lattice vertexes.
 
     /// 'cconn' averaged over complexes: is indexed by C type and slot.
-    std::array<std::vector<real>,BaseC::NT> conNbT;
+    std::array<std::vector<real>, BaseC::NT> conNbT;
     /// 'cconn' averaged over both complexes and slots: is indexed by C type.
-    std::array<real,BaseC::NT>              conCT;
+    std::array<real, BaseC::NT> conCT;
 
     szt it;  ///< Iteration index.
 
@@ -112,7 +117,7 @@ private:
 
     real hamming_dist(
         const szt,
-        const Ornt::T,
+        const Ornt::value_t,
         const szt,
         const szt
     ) const noexcept;
@@ -134,7 +139,6 @@ private:
     void setSCs() noexcept;
 
     void set_gE() noexcept;
-
 };
 
 }  // namespace mosaicsc

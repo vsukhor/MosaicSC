@@ -24,26 +24,20 @@
 ================================================================================
 */
 
-#include "utils/common/misc.h"
-
-#include "c3.h"
+#include "mosaicsc/c3.h"
+#include "utils/misc.h"
+#include <cstdlib>
+#include <fstream>
 
 namespace mosaicsc {
 
-C<3>::
-C( const szt ind,
-    const Ornt::T di,
-    const A2<szt>& pos ) noexcept
-    : BaseC {ind, di, pos}
-{}
-
-utils::szt C<3>::
+std::size_t C<3>::
 initialize( const szt posini,
             vec2szt& tp,
             vec2ort& di ) noexcept
 {
     szt pos {posini};
-    for (szt j=0; j<BaseC::sps->Ntot[type-1]; j++) {
+    for (szt j=0; j<BaseC::sps->nparticles[type-1]; j++) {
         tp[2][pos] = type;
         di[2][pos] = Ornt::no;
         pos++;
@@ -52,15 +46,15 @@ initialize( const szt posini,
 }
 
 real C<3>::
-hamming_dist(
-    const szt i,
-    const szt j,
-    const Ornt::T , //ornt,
-    const vec2szt& tp,
-    const vec2ort& di,
-    const szt L[]) noexcept
+hamming_dist(const szt i,
+             const szt j,
+             const Ornt::value_t , //ornt,
+             const vec2szt& tp,
+             const vec2ort& di,
+             const szt L[] ) noexcept
 {
-    auto interacts = [&](auto& o) {
+    auto interacts = [&](auto& o)
+    {
         return (is_occupied(o.t, o.di, i, j, o.sh, tp, di, L));
     };
 
@@ -96,19 +90,19 @@ set_conn( const vec2szt& tp,
 }
 
 bool C<3>::
-node_is_occupied(
-              const szt i,
-              const szt j,
-              const vec2szt& tp,
-              const vec2ort& , // di,
-              const szt L[] ) noexcept
+node_is_occupied( const szt i,
+                  const szt j,
+                  const vec2szt& tp,
+                  const vec2ort& , // di,
+                  const szt L[] ) noexcept
 {
     if (tp[i][j] == type) return true;
 
-    for (const auto& o : occ) {
+    for (const auto& o : occ)
         if (const auto p = position(i, j, o.rv, L);
-            tp[p[0]][p[1]] == type) return true;
-    }
+            tp[p[0]][p[1]] == type)
+
+            return true;
 
     return false;
 }
@@ -116,14 +110,14 @@ node_is_occupied(
 void C<3>::
 write( std::ofstream &ofs ) const
 {
-    ofs.write((char*const) &ind, sizeof(ind));
-    ofs.write((char*const) &type, sizeof(type));
-    ofs.write((char*const) &di, sizeof(di));
-    auto k = pos[0]; ofs.write((char*const) &k, sizeof(k));
-         k = pos[1]; ofs.write((char*const) &k, sizeof(k));
+    ofs.write((char const*)&ind, sizeof(ind));
+    ofs.write((char const*)&type, sizeof(type));
+    ofs.write((char const*)&di, sizeof(di));
+    auto k = pos[0]; ofs.write((char const*)&k, sizeof(k));
+         k = pos[1]; ofs.write((char const*)&k, sizeof(k));
 
     for (const auto& o : conn)
-        ofs.write((char*const) &o, sizeof(o));
+        ofs.write((char const*)&o, sizeof(o));
 }
 
 }  // namespace mosaicsc

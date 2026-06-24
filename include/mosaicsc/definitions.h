@@ -27,45 +27,50 @@
 #ifndef MOSAICSC_DEFINITIONS_H
 #define MOSAICSC_DEFINITIONS_H
 
-#include "utils/common/misc.h"
+#include "utils/misc.h"
 
-#define MOSAICSC_FP32    ///< Comment this out to switch to double precision.
-#define MOSAICSC_CUDA 0  ///< Define MOSAICSC_CUDA > 0 to switch the GPU use off
-
-#if MOSAICSC_CUDA>0
+///< Define to switch the GPU use off
+//#define MOSAICSC_USE_CUDA  // is a compiler option preset by cmake
+#ifdef MOSAICSC_USE_CUDA
     #include "utils/random/with_cuda.h"
 #else
-    #include "utils/random/with_boost.h"
+    #include "utils/random/with_stl.h"
 #endif
+
+#include <array>
+#include <string_view>
+#include <type_traits>
 
 namespace mosaicsc {
 
-#ifdef MOSAICSC_FP32
-    using real = float;
-#else
-    using real = double;
-#endif
+using namespace std::string_literals;
+using namespace std::string_view_literals;
 
-#if MOSAICSC_CUDA>0
+inline constexpr bool realIsDouble {false};  ///< double or float ?
+using real = std::conditional_t<realIsDouble, double, float>;
+
+#if MOSAICSC_USE_CUDA
     using RandFactory = utils::random::Cuda<real>;
+    inline constexpr bool useCuda {true};
 #else
-    using RandFactory = utils::random::Boost<real>;
+    using RandFactory = utils::random::WithSTL<real>;
+    inline constexpr bool useCuda {false};
 #endif
 
-template<typename T> using A2 = std::array<T,2>;
-template<typename T> using A3 = std::array<T,3>;
-template<typename T> using A4 = std::array<T,4>;
+template<typename T> using A2 = std::array<T, 2>;
+template<typename T> using A3 = std::array<T, 3>;
+template<typename T> using A4 = std::array<T, 4>;
 
 struct Ornt {
 
-    using T = int;     // data type used by the class
-    static constexpr T up {1};
-    static constexpr T no {0};
-    static constexpr T dw {-1};
-    static constexpr T nd {utils::huge<T>};
+    using value_t = int;     // data type used by the class
+    static constexpr value_t up {1};
+    static constexpr value_t no {0};
+    static constexpr value_t dw {-1};
+    static constexpr value_t nd {utils::huge<value_t>};
 
     // Return the up side down orientation:
-    static constexpr T usd(const T from)
+    static constexpr value_t usd(const value_t from)
     {
         return from == up
                ? dw
@@ -76,14 +81,16 @@ struct Ornt {
 };
 
 // Aliaces to utility library names.
-using szt = utils::szt;
+using uint = unsigned int;
+using ulong = unsigned long;
+using szt = std::size_t;
 using vec2real = utils::vec2<real>;
 using vec2szt = utils::vec2<szt>;
 using vec2uint = utils::vec2<uint>;
-using vec2ort = utils::vec2<Ornt::T>;
+using vec2ort = utils::vec2<Ornt::value_t>;
 
 // Template to be futrther customized in component type-specific
-// template specializations.
+// specializations.
 template<uint> class C {};
 
 }  // namespace mosaicsc

@@ -46,6 +46,7 @@ class Config:
         self.rates = [float(x) for x in line(f)[2:]]
         self.syn = float(line(f)[2])
         self.beta = float(line(f)[2])
+        skip_lines(2, f)            # Configuration, rng
 
     def __eq__(self, c):
         """

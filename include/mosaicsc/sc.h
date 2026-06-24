@@ -24,74 +24,62 @@
 ================================================================================
 */
 
-#ifndef MOSAICSC_PARAMETERS_H
-#define MOSAICSC_PARAMETERS_H
+#ifndef MOSAICSC_SC_H
+#define MOSAICSC_SC_H
 
-#include <filesystem>
-#include <iostream>
-#include <sstream>
-#include <string>
+#include "mosaicsc/parameters.h"
+
+#include <array>
+#include <fstream>
 #include <vector>
-
-#include "utils/msgr.h"
-
-#include "definitions.h"
 
 namespace mosaicsc {
 
-struct  __attribute__((aligned(128)))
-Parameters {
+template <typename BC>
+struct SC {
 
-    using path = std::filesystem::path;
+    szt ind;
+    std::array<std::vector<BC*>, BC::NT> c;
 
-    static constexpr unsigned long numBasicTypes {4};
+    explicit SC(szt ind);
 
-    path workingDir_in;
-    path workingDir_out;
+    std::array<szt, BC::NT> get_numC();
 
-    szt RUN_ini;
-    szt RUN_end;
-    szt nthreads;
-    int resume;
-    szt Niter;
-    szt logfreq;
-    szt detailedfreq;
-    szt finaldetailed;
-    szt savefreq;
-
-    std::vector<unsigned long> Ntot;
-    real               dilution;
-    uint               inum;
-    std::vector<real>  rates_f;
-    real               syn;
-    real               beta;
-
-    explicit Parameters(const path& configFile);
-
-    void print(utils::Msgr& msgr) const;
-
-private:
-
-    void load_config(const path& file);
-
-    template <typename K>
-    void initialize_arrayparam(
-        szt,
-        std::string,
-        const std::string&,
-        std::vector<K>&
-    );
-
-    // If the line contains a valid parname-value combination,
-    // returns true and combination, otherwise retruns false.
-    bool preprocess_line(
-        std::ifstream&,
-        std::string&,
-        std::string&
-    );
-
+    void write(std::ofstream&) const;
 };
+
+// IMPLEMENTATION ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+
+template <typename BC>
+SC<BC>::
+SC( const szt ind )
+    : ind {ind}
+{}
+
+template <typename BC>
+inline std::array<szt, BC::NT> SC<BC>::
+get_numC()
+{
+    std::array<szt, BC::NT> num = {};
+    for (const auto& o : c)
+        num[(int)o->get_type()-1]++;
+    return num;
+}
+
+template <typename BC>
+void SC<BC>::
+write( std::ofstream& ofs ) const
+{
+    ofs.write(reinterpret_cast<const char*>(&ind), sizeof(ind));
+
+    for (const auto& o : c) {
+        const szt s {o.size()};
+        ofs.write(reinterpret_cast<const char*>(&s), sizeof(s));
+        for (const auto oo : o)
+            oo->write(ofs);
+    }
+}
 
 }  // namespace mosaicsc
 
-#endif  // MOSAICSC_PARAMETERS_H
+#endif  // MOSAICSC_SC_H

@@ -1,13 +1,17 @@
-cmake_minimum_required(VERSION 3.17)
+cmake_minimum_required(VERSION 4.2)
 
 project(MosaicSC
-    VERSION 0.7.1
-    DESCRIPTION "Simulation of space-embedded molecular aggregates"
+    VERSION 0.9.1
+    DESCRIPTION
+    "Simulation of space-embedded molecular aggregates using Potts model"
     LANGUAGES CXX)
 
-set(CMAKE_CXX_STANDARD 20)
-set(CMAKE_CXX_STANDARD_REQUIRED ON)
-add_compile_options(-O3 -msse4)
+add_compile_options("-std=c++20" "-Wall" "-Wextra" "-fexceptions")
+if(CMAKE_BUILD_TYPE==Debug)
+    add_compile_options("-O0;-g3;-ggdb")
+elseif(CMAKE_BUILD_TYPE==Release)
+    add_compile_options("-O3; -march=native")
+endif()
 
 if(CMAKE_PROJECT_NAME STREQUAL PROJECT_NAME)
 
@@ -20,19 +24,25 @@ if(CMAKE_PROJECT_NAME STREQUAL PROJECT_NAME)
 
 endif()
 
-find_package(Threads REQUIRED)
-find_package(Boost REQUIRED)
-if(Boost_FOUND)
-  include_directories(${Boost_INCLUDE_DIRS})
-endif()
+# Upload computations to gpu with cuda (rng only)
+if(MOSAICSC_USE_CUDA)
+    message("Using CUDA")
+    find_package(CUDAToolkit REQUIRED)
+    set(CMAKE_POSITION_INDEPENDENT_CODE ON)
+    #set(CMAKE_CUDA_ARCHITECTURES 75 80 86 87 89 90 100 110 120)
+    set(CMAKE_CUDA_ARCHITECTURES 86 87)
+    set(CMAKE_CUDA_FLAGS
+        "${CMAKE_CUDA_FLAGS} -Wno-deprecated-gpu-targets --expt-relaxed-constexpr -rdc=true")
+    if(ENABLE_CUDA_DEBUG)
+        # enable cuda-gdb (may significantly affect performance on some targets)
+        set(CMAKE_CUDA_FLAGS "${CMAKE_CUDA_FLAGS} -G")
+    else()
+        # add line info to all builds for debug tools (exclusive to -G option)
+        set(CMAKE_CUDA_FLAGS "${CMAKE_CUDA_FLAGS} -lineinfo")
+    endif()
+endif(MOSAICSC_USE_CUDA)
 
-add_subdirectory(external)
+find_package(Threads REQUIRED)
 
 add_subdirectory(src)
-
-# The executable code is here:
-add_subdirectory(app)
-
-
-
-
+add_subdirectory(app)  # The executable code is here

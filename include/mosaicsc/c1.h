@@ -27,24 +27,28 @@
 #ifndef MOSAICSC_C1_H
 #define MOSAICSC_C1_H
 
+#include "mosaicsc/base_component.h"
 #include "utils/constants.h"
-
-#include "base_component.h"
+#include <array>
+#include <fstream>
 
 namespace mosaicsc {
 
+/// Component type 1
 template <>
 struct C<1> : public BaseC {
 
+    using BaseC::BaseC;
+
     static constexpr szt type {1};
 
-    static constexpr std::array<Occupancy,3> occ {{
+    static constexpr std::array<Occupancy, 3> occ {{
         {Ornt::up, {0, 1}},
         {Ornt::up, {0, 2}},
         {Ornt::up, {1, 1}},
     }};
 
-    static constexpr std::array<Interactor,10> phb {{
+    static constexpr std::array<Interactor, 10> phb {{
         {Ornt::up, Ornt::up, 1, {0, -2}, nullptr, "01 01 a"},
         {Ornt::up, Ornt::up, 1, {0, -1}, nullptr, "01 01 b"},
         {Ornt::up, Ornt::up, 1, {0,  1}, nullptr, "01 01 c"},
@@ -57,7 +61,7 @@ struct C<1> : public BaseC {
         {Ornt::up, Ornt::no, 3, {2,  1}, nullptr, "01 03  "}
     }};
 
-    static constexpr std::array<Interactor,4> itr {{
+    static constexpr std::array<Interactor, 4> itr {{
         {Ornt::up, Ornt::up, 4, {1, -1}, &k_1_4a, "01 04 a"},
         {Ornt::up, Ornt::no, 3, {2,  0}, &k_1_3a, "01 03 a"},
         {Ornt::up, Ornt::no, 3, {2,  2}, &k_1_3b, "01 03 b"},
@@ -65,12 +69,6 @@ struct C<1> : public BaseC {
     }};
 
     std::array<int, itr.size()> conn;
-
-    explicit C(
-        szt ind,
-        Ornt::T di,
-        const A2<szt>& pos
-    ) noexcept;
 
     static A2<szt> initialize(
         const A2<szt>&,
@@ -82,7 +80,7 @@ struct C<1> : public BaseC {
     static real hamming_dist(
         szt,
         szt,
-        Ornt::T,
+        Ornt::value_t,
         const vec2szt&,
         const vec2ort&,
         const szt[]

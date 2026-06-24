@@ -24,74 +24,76 @@
 ================================================================================
 */
 
-#include <filesystem>
-#include <functional>
-#include <iostream>
-#include <mutex>
-#include <string>
-#include <thread>
+#include "mosaicsc/definitions.h"
+#include "mosaicsc/parameters.h"
+#include "mosaicsc/base_component.h"
+#include "mosaicsc/potts.h"
 
+#include "utils/logger.h"
+#include "utils/misc.h"
 #include "utils/msgr.h"
 #include "utils/stop_watch.h"
 #include "utils/threads.h"
 
-#include "definitions.h"
-#include "parameters.h"
-#include "base_component.h"
-#include "potts.h"
+#include <filesystem>
+#include <functional>
+#include <iostream>
+#include <mutex>
+#include <string_view>
+#include <thread>
 
-void runThread( const size_t i1,
+void run_thread(const size_t i1,
                 const size_t i2,
                 const size_t ith,
                 std::mutex& mtx,
-                const mosaicsc::Parameters& sps );
+                const mosaicsc::Parameters& sps);
 
-int main( int argc, const char* argv[] ) 
+int main(int argc, const char* argv[])
 {
-
-    auto exit = [](const std::string& s) {
-        std::cerr << s << std::endl;
-        std::exit(EXIT_FAILURE);
-    };
+    using namespace mosaicsc;
 
     if (argc < 2)
-        exit("Error: The path to config file is missing.");
+        utils::exit("Error: Please provide path to config file.");
 
-    std::filesystem::path workingDir {std::string(argv[1])};
+    std::filesystem::path workingDir {std::string_view(argv[1])};
 
-    auto configFile {workingDir / "config.txt"};
+    const auto configFile {workingDir / "config.txt"};
     if (!std::filesystem::is_regular_file(configFile))
-        exit("Config file not accessible in with path " + configFile.string());
+        utils::exit("Config file not accessible in with path " +
+                    configFile.string());
 
-    mosaicsc::Parameters sps {configFile};
+    Parameters sps {configFile};
 
     sps.workingDir_in = workingDir;
     if (!std::filesystem::exists(sps.workingDir_in))
-        exit("No directory for input files is available");
+        utils::exit("No directory for input files is available");
 
     sps.workingDir_out = workingDir;
     if (!std::filesystem::exists(sps.workingDir_out))
-        exit("No directory for output files is available");
+        utils::exit("No directory for output files is available");
 
-    mosaicsc::BaseC::set_statics(&sps);
+    if (const auto spsError = sps.check(); spsError.length())
+        utils::exit(spsError);
+
+    BaseC::set_statics(&sps);
 
     std::mutex mtx;
 
-    const auto ntasks = sps.RUN_end - (sps.RUN_ini - 1);
+    const auto ntasks = sps.runLast - (sps.runFirst - 1);
 
-    if (MOSAICSC_CUDA && ntasks > 1)
-        exit(std::string("Using CUDA is only compatible with ") +
-             "single-threaded execution.\nPlease set nthreads = 1");
+    if (useCuda && ntasks > 1)
+        utils::exit("Using CUDA is only compatible with "s +
+                    "single-threaded execution.\nPlease set nthreads = 1");
 
     utils::threads::Threads<utils::threads::Weights::Equal> th {
-        sps.RUN_ini,
+        sps.runFirst,
         ntasks,
         0,
         sps.nthreads
     };
 
     for (size_t ith=0; ith<th.thr.size(); ith++)
-        th.thr[ith] = std::thread( runThread, th.i1[ith],
+        th.thr[ith] = std::thread(run_thread, th.i1[ith],
                                               th.i2[ith],
                                               ith,
                                               std::ref(mtx),
@@ -101,45 +103,45 @@ int main( int argc, const char* argv[] )
     return EXIT_SUCCESS;
 }
 
-void runThread( const size_t i1,
+void run_thread(const size_t i1,
                 const size_t i2,
                 const size_t ith,
                 std::mutex& mtx,
-                const mosaicsc::Parameters& sps )
+                const mosaicsc::Parameters& sps)
 {
+    using namespace mosaicsc;
+
     for (auto i=i1; i<i2; i++) {
 
         mtx.lock();
 
             const auto runname = std::to_string(i);
-            const auto logf = sps.workingDir_out /
-                (std::string("log_") + runname + ".txt");
+            const auto logf = sps.workingDir_out / ("log_"s + runname + ".txt");
             std::ofstream log;
             try {
-                if (sps.resume) log.open(logf, std::ios::app);
-                else            log.open(logf, std::ios::trunc);
+                sps.resume ? log.open(logf, std::ios::app)
+                           : log.open(logf, std::ios::trunc);
             } catch (const std::ifstream::failure&) {
-                std::cerr << "Cannot open file: " << logf << std::endl;
-                std::exit(EXIT_FAILURE);
+                utils::exit("Cannot open file: "s + logf.string());
             }
             constexpr int print_accuracy {6};
-            utils::Msgr msgr {&std::cout, &log, print_accuracy};
-            sps.print(msgr);
-            
+            msgr = new utils::Msgr{&std::cout, &log, print_accuracy};
+            sps.print();
+
             utils::StopWatch stopwatch;
             stopwatch.start();
 
             constexpr int buffersize {1024};
             char hostname[buffersize];
             gethostname(hostname, buffersize);
-            msgr.print("Run ", runname, " started: ", stopwatch.start.str,
-                       " on ", hostname);
+            jot("Run ", runname, " started: ", stopwatch.start.str,
+                " on ", hostname);
 
-            auto R = std::make_unique<mosaicsc::RandFactory>(i, msgr);
+            auto rnd = std::make_unique<mosaicsc::RandFactory>(i, *msgr);
 
         mtx.unlock();
 
-        mosaicsc::Potts sim {sps, mtx, runname, ith, R, msgr};
+        Potts sim {sps, mtx, runname, ith, rnd};
         sim.run();
 
         mtx.lock();
@@ -147,9 +149,9 @@ void runThread( const size_t i1,
             log << std::endl;
             std::cout << std::endl;
             stopwatch.stop();
-            msgr.print("Run ", runname, " finished: ", stopwatch.stop.str,
+            jot("Run ", runname, " finished: ", stopwatch.stop.str,
                        "on ", hostname);
-            msgr.print("Wall time used; ", stopwatch.duration(), " sec");
+            jot("Wall time used; ", stopwatch.duration(), " sec");
             log << std::endl;
             std::cout << std::endl;
 

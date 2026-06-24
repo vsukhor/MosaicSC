@@ -23,13 +23,18 @@
 ================================================================================
 */
 
+#include "mosaicsc/potts.h"
+
+#include "utils/logger.h"
+#include "utils/misc.h"
+
+#include <algorithm>
 #include <fstream>
 #include <iostream>
-
-#include "utils/common/misc.h"
-#include "utils/msgr.h"
-
-#include "potts.h"
+#include <memory>
+#include <mutex>
+#include <string>
+#include <utility>
 
 namespace mosaicsc {
 
@@ -38,12 +43,10 @@ Potts( const Parameters& sps,
        std::mutex& mtx,
        const std::string& runname,
        const szt ithread,
-       std::unique_ptr<RandFactory>& rf,
-       utils::Msgr& msgr ) noexcept
+       std::unique_ptr<RandFactory>& rf) noexcept
     : sps {sps}
     , runname {runname}
     , ithread {ithread}
-    , msgr {msgr}
     , mtx {mtx}
     , rf {rf}
     , io {this}
@@ -51,28 +54,31 @@ Potts( const Parameters& sps,
     mtx.lock();
         // Max number of row nodes occupied:
         const auto maxn = std::max({
-                szt((3*sps.Ntot[0] + sps.Ntot[1]) / 2) + 1,   // row 1 or 4
-                sps.Ntot[2] + szt(sps.Ntot[3] / 2) + 1});     // row 2
+            szt((3*sps.nparticles[0] + sps.nparticles[1]) / 2) + 1, // row 1 or 4
+            sps.nparticles[2] + szt(sps.nparticles[3] / 2) + 1      // row 2
+        });
         // Lattice dimensions:
         L[0] = numRows;
         L[1] = static_cast<szt>(sps.dilution * maxn);
-        msgr.print("Lattice dimensions ", L[0], " ", L[1]);
+        jot("Lattice dimensions ", L[0], " ", L[1]);
         V = L[0] * L[1];
-        
-        cE = std::vector<real>(L[0]);        // energies per lattice row
-        
+
+        cE = std::vector<real>(L[0]);  // energies per lattice row
+
         for (szt h=1; h<BaseC::NT; h++)
             conNbT[h].resize(get_nbtmax(h));
-        
-        // Number of empty nodes at lattices available for C1, ..., C4:
-        std::vector<szt> nemp_T = { 2*L[1] - sps.Ntot[0] - sps.Ntot[1],  // C1
-                                    2*L[1] - sps.Ntot[0] - sps.Ntot[1],  // C2
-                                    L[1] - sps.Ntot[2],                  // C3
-                                    2*L[1] - sps.Ntot[3] };              // C4
 
-        namespace Vec2 = utils::common::Vec2;
+        // Number of empty nodes at lattices available for C1, ..., C4:
+        std::vector<szt> nemp_T {
+            2*L[1] - sps.nparticles[0] - sps.nparticles[1],  // C1
+            2*L[1] - sps.nparticles[0] - sps.nparticles[1],  // C2
+              L[1] - sps.nparticles[2],                      // C3
+            2*L[1] - sps.nparticles[3]                       // C4
+        };
+
+        namespace Vec2 = utils::Vec2;
         for (szt i = 1; i<BaseC::NT; i++) {
-            ocPos[i] = Vec2::make<uint>(sps.Ntot[i-1], 2, 0);
+            ocPos[i] = Vec2::make<uint>(sps.nparticles[i-1], 2, 0);
             emPos[i] = Vec2::make<uint>(nemp_T[i-1], 2, 0);
         }
 
@@ -80,15 +86,15 @@ Potts( const Parameters& sps,
         // particle types
         tp    = Vec2::make<szt>(L[0], L[1], 0);
         // particle orientations
-        di    = Vec2::make<Ornt::T>(L[0], L[1], Ornt::nd);
+        di    = Vec2::make<Ornt::value_t>(L[0], L[1], Ornt::nd);
         // energies
         gE    = Vec2::make<real>(L[0], L[1], 0);
         // aggregation classes
         mskSC = Vec2::make<szt>(L[0], L[1], 0);
-        
+
         it = sps.resume
-           ? io.readin_lattice()
-           : initialize_lattices();
+           ? io.read_lattice()       // resume a saved simulation
+           : initialize_lattices();  // start a new simulation
 
     mtx.unlock();
 }
@@ -126,7 +132,7 @@ initialize_lattices() noexcept
             }
         }
     }
-    return 0;    // it
+    return 0; // it
 }
 
 void Potts::
@@ -135,7 +141,7 @@ run() noexcept
     if (!sps.resume)
         io.output(1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0., 0., 0., 0., 0.);
 
-    while (it <= sps.Niter) {
+    while (it <= sps.nsteps) {
         uint i1, i2, j1, j2;
         choose_node_pair(i1, i2, j1, j2);
 
@@ -154,18 +160,20 @@ run() noexcept
         // Energies at the original configuration:
         const auto e1old = hamming_dist(t1old, d1old, i1, j1);
         const auto e2old = hamming_dist(t2old, d2old, i2, j2);
+
         // Assume a successful move: swap the particles:
         tp[i1][j1] = t1new;    di[i1][j1] = d1new;
         tp[i2][j2] = t2new;    di[i2][j2] = d2new;
-        // Calculate the new energies and decide based on the energy difference
-        // between the old and new configurations:
+
+        // Calculate new energies and decide based on the energy difference
+        // between the old and the new configurations:
         if (const auto e1new = hamming_dist(t1new, d1new, i1, j1);
             e1new < utils::INF<real>) {
             if (const auto e2new = hamming_dist(t2new, d2new, i2, j2);
                 e2new < utils::INF<real>) {
                 // Metropolis condition on energy difference:
                 if (const auto dE = e1new + e2new - e1old - e2old;
-                    dE < utils::zero<real> ||
+                    dE < 0 ||
                     rf->r01u() < std::exp(-sps.beta * dE)) {
                     // the move is accepted: increment
                     if (it % sps.logfreq == 0)
@@ -175,17 +183,17 @@ run() noexcept
                                   e1old, e2old, e1new, e2new, dE);
                     it++;
                 }
-                else { // The move is rejected: swap the particles back:
+                else {  // The move is rejected: swap the particles back:
                     tp[i1][j1] = t1old;    di[i1][j1] = d1old;
                     tp[i2][j2] = t2old;    di[i2][j2] = d2old;
                 }
             }
-            else { // The move is rejected: swap the particles back:
+            else {  // The move is rejected: swap the particles back:
                 tp[i1][j1] = t1old;    di[i1][j1] = d1old;
                 tp[i2][j2] = t2old;    di[i2][j2] = d2old;
             }
         }
-        else { // The move is rejected: swap the particles back:
+        else {  // The move is rejected: swap the particles back:
             tp[i1][j1] = t1old;    di[i1][j1] = d1old;
             tp[i2][j2] = t2old;    di[i2][j2] = d2old;
         }
@@ -219,7 +227,7 @@ choose_node_pair( uint& i1, uint& i2,
             j2 = ocPos[rt[0]][q2][1];
         }
         else { // if rt.size() == 2
-            const szt s[] = {ocPos[rt[0]].size(), ocPos[rt[1]].size()};
+            const szt s[] {ocPos[rt[0]].size(), ocPos[rt[1]].size()};
             const auto q2 = rf->uniform0(s[0]+s[1]);
             if (q2 < s[0]) {
                 i2 = ocPos[rt[0]][q2][0];
@@ -239,9 +247,9 @@ hamming_dist( const szt t,
               const szt i,
               const szt j ) const noexcept
 {
-    XASSERT(t<=Parameters::numBasicTypes,
-            "Type not found for t = " + std::to_string(t));
-    if (t == 0) return utils::zero<real>;
+    ASSERT(t <= Parameters::numBasicTypes, "Type not found for t = ", t);
+
+    if (t == 0) return 0;
     if (t == 4) return C<4>::hamming_dist(i, j, d, tp, di, L);
     if (t == 2) return C<2>::hamming_dist(i, j, d, tp, di, L);
     if (t == 3) return C<3>::hamming_dist(i, j, d, tp, di, L);
@@ -264,9 +272,9 @@ massvarSC() noexcept
     A2<real[BaseC::NT]> v;
     for (szt i=0; i<BaseC::NT; i++) {
         // 0: mean of SC sizes; 1-4: mean of # of corresponding monomers per SC
-        v[0][i] = utils::common::avg(s[i]);
+        v[0][i] = utils::avg(s[i]);
         // var of the same
-        v[1][i] = utils::common::var(s[i]);
+        v[1][i] = utils::var(s[i]);
     }
     return v;
 }
@@ -285,16 +293,16 @@ void Potts::
 eTot() noexcept
 {
     set_gE();
-    std::fill(cE.begin(), cE.end(), utils::zero<real>);
+    std::fill(cE.begin(), cE.end(), 0);
     for (szt i=0; i<L[0]; i++)
         for (szt j=0; j<L[1]; j++)
-            cE[tp[i][j]] += gE[i][j] / utils::two<real>;
+            cE[tp[i][j]] += gE[i][j] / real(2);
 }
 
 void Potts::
 set_gE() noexcept
 {
-    utils::common::Vec2::fill<real>(gE, utils::zero<real>);
+    utils::Vec2::fill<real>(gE, 0);
     for (szt i=0; i<L[0]; i++)
         for (szt j=0; j<L[1]; j++)
             gE[i][j] = hamming_dist(tp[i][j], di[i][j], i, j);
@@ -303,7 +311,7 @@ void Potts::
 setSCs() noexcept
 {
     scs.clear();
-    utils::common::Vec2::fill<szt>(mskSC, 0);
+    utils::Vec2::fill<szt>(mskSC, 0);
     for (szt i=0; i<L[0]; i++)
         for (szt j=0; j<L[1]; j++)
             if (!mskSC[i][j] && tp[i][j]) {
@@ -320,17 +328,22 @@ parce( const szt i,
        SC<BaseC>& sc ) noexcept
 {
     if (mskSC[i][j]) return;    // already parced here
+
     const auto t = tp[i][j];
     if (!t) return;             // site is empty
+
     mskSC[i][j] = sc.ind + 1;   // mark as parced
 
-    auto ld = [&](const auto& itr) {
+    auto ld = [&](const auto& itr)
+    {
         for (const auto& o : itr) {
+
             const auto dOrig = (o.so == di[i][j]);
             const auto nbsh = dOrig ? o.sh : o.rv;
             const auto p = BaseC::position(i, j, nbsh, L);
             if (tp[p[0]][p[1]] == o.t &&
                 di[p[0]][p[1]] == (dOrig ? o.di : Ornt::usd(o.di)))
+
                 parce(p[0], p[1], sc);
         }
     };
@@ -362,7 +375,7 @@ set_connectivity() noexcept
 
     for (szt k=1; k<BaseC::NT; k++) {
         std::fill(conNbT[k].begin(), conNbT[k].end(), 0);
-        const auto n = sps.Ntot[k-1];
+        const auto n = sps.nparticles[k-1];
         const auto nbtmax = get_nbtmax(k);
         for (szt h=0; h<nbtmax; h++) {
             int su {};
@@ -373,7 +386,7 @@ set_connectivity() noexcept
         }
         // Mean fraction of all slots a complex of type k posesses
         // that are occupied:
-        conCT[k] = (n > 0) ? utils::common::avg(conNbT[k]) : 0;
+        conCT[k] = (n > 0) ? utils::avg(conNbT[k]) : 0;
     }
 }
 

@@ -24,67 +24,59 @@
 ================================================================================
 */
 
-#ifndef MOSAICSC_C3_H
-#define MOSAICSC_C3_H
+#ifndef MOSAICSC_C4_H
+#define MOSAICSC_C4_H
 
-#include "utils/common/misc.h"
-
-#include "base_component.h"
+#include "mosaicsc/base_component.h"
+#include "utils/constants.h"
+#include <array>
+#include <fstream>
 
 namespace mosaicsc {
 
+/// Component type 4
 template <>
-struct C<3> : public BaseC {
+struct C<4> : public BaseC {
 
-    static constexpr szt type {3};
+    using BaseC::BaseC;
 
-    static constexpr std::array<Occupancy,2> occ {{
-        {Ornt::no, { 1, 0}},
-        {Ornt::no, {-1, 0}}
+    static constexpr szt type {4};
+
+    static constexpr std::array<Occupancy,1> occ {{
+        {Ornt::up, {1, 0}},
     }};
 
-    static constexpr std::array<Interactor,8> phb {{
-        {Ornt::no, Ornt::up, 1, {-2, -1}, nullptr, "03 01+ "},
-        {Ornt::no, Ornt::up, 2, {-2,  1}, nullptr, "03 02+ "},
-        {Ornt::no, Ornt::up, 4, {-1,  0}, nullptr, "03 04+ "},
-        {Ornt::no, Ornt::no, 3, { 0, -1}, nullptr, "03 03+ "},
-        {Ornt::no, Ornt::no, 3, { 0,  1}, nullptr, "03 03- "},
-        {Ornt::no, Ornt::dw, 4, { 1,  0}, nullptr, "03 04- "},
-        {Ornt::no, Ornt::dw, 2, { 2, -1}, nullptr, "03 02+ "},
-        {Ornt::no, Ornt::dw, 1, { 2,  1}, nullptr, "03 01- "}
+    static constexpr std::array<Interactor,7> phb {{
+        {Ornt::up, Ornt::up, 1, {-1, -2}, nullptr, "04 01 a"},
+        {Ornt::up, Ornt::up, 1, {-1, -1}, nullptr, "04 01 b"},
+        {Ornt::up, Ornt::up, 1, {-1,  0}, nullptr, "04 01 c"},
+        {Ornt::up, Ornt::up, 2, {-1,  0}, nullptr, "04 02  "},
+        {Ornt::up, Ornt::up, 4, { 0, -1}, nullptr, "04 04 a"},
+        {Ornt::up, Ornt::up, 4, { 0,  1}, nullptr, "04 04 b"},
+        {Ornt::up, Ornt::no, 3, { 1,  0}, nullptr, "04 03  "},
     }};
 
-    static constexpr std::array<Interactor,10> itr {{
-        {Ornt::no, Ornt::up, 1, {-2,  0}, &k_1_3a, "01 03+a"},
-        {Ornt::no, Ornt::up, 1, {-2, -2}, &k_1_3b, "01 03+b"},
-        {Ornt::no, Ornt::up, 2, {-2,  0}, &k_2_3,  "02 03+ "},
-        {Ornt::no, Ornt::up, 4, {-1, -1}, &k_3_4a, "03 04+a"},
-        {Ornt::no, Ornt::up, 4, {-1,  1}, &k_3_4b, "03 04+b"},
-        {Ornt::no, Ornt::dw, 4, { 1, -1}, &k_3_4b, "03 04-b"},
-        {Ornt::no, Ornt::dw, 4, { 1,  1}, &k_3_4a, "03 04-a"},
-        {Ornt::no, Ornt::dw, 2, { 2,  0}, &k_2_3,  "02 03- "},
-        {Ornt::no, Ornt::dw, 1, { 2,  2}, &k_1_3b, "01 03-b"},
-        {Ornt::no, Ornt::dw, 1, { 2,  0}, &k_1_3a, "01 03-a"}
+    static constexpr std::array<Interactor,6> itr {{
+        {Ornt::up, Ornt::up, 1, {-1,  1}, &k_1_4a, "01 04 a"},
+        {Ornt::up, Ornt::up, 2, {-1,  1}, &k_2_4,  "02 04  "},
+        {Ornt::up, Ornt::no, 3, { 1, -1}, &k_3_4b, "03 04 b"},
+        {Ornt::up, Ornt::no, 3, { 1,  1}, &k_3_4a, "03 04 a"},
+        {Ornt::up, Ornt::dw, 4, { 2,  0}, &k_4_4,  "04 04  "},
+        {Ornt::up, Ornt::dw, 1, { 3,  1}, &k_1_4b, "01 04bb"},
     }};
 
     std::array<int, itr.size()> conn;
 
-    explicit C(
-        szt ind,
-        Ornt::T di,
-        const A2<szt>& pos
-    ) noexcept;
-
-    static szt initialize(
-        szt,
+    static A2<szt> initialize(
+        const A2<szt>&,
         vec2szt&,
-        vec2ort&
+        vec2ort&,
+        szt
     ) noexcept;
 
-    static real hamming_dist(
+    static real hamming_dist(const szt,
         szt,
-        szt,
-        Ornt::T,
+        Ornt::value_t,
         const vec2szt&,
         const vec2ort&,
         const szt[]
@@ -105,10 +97,9 @@ struct C<3> : public BaseC {
         const szt[]
     ) noexcept;
 
-    void write(std::ofstream&) const final;
-
+    void write(std::ofstream &ofs) const final;
 };
 
 }   // namespace mosaicsc
 
-#endif // MOSAICSC_C3_H
+#endif // MOSAICSC_C4_H
